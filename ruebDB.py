@@ -1,5 +1,5 @@
 import psycopg2
-from configurations import databaseconfig
+import config
 
 
 
@@ -11,7 +11,7 @@ def dbrequest(sqlstatement, user_input):
     try:
         
         # read connection parameters
-        params = databaseconfig()
+        params = config.databaseconfig()
         
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
@@ -51,7 +51,7 @@ def dbfetchall(sqlstatement, user_input):
     try:
         
         # read connection parameters
-        params = databaseconfig()
+        params = config.databaseconfig()
         
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
@@ -91,7 +91,7 @@ def dbcommit(sqlstatement, user_input):
     try:
         
         # read connection parameters
-        params = databaseconfig()
+        params = config.databaseconfig()
         
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')

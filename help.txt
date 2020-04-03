@@ -1,22 +1,29 @@
 ```
+$RÃœBot v.1.0.0
+
 Optionen:
 	help								Gibt diese hilfe aus.
 
 
-Rübenpreise:
-	price add <price>                   Schreibt den aktuellen Rübenpreis in die Datenbank (Zeitzone Europe/Berlin)
-	price list                          Listet alle aktuellen Rübenpreise auf
+RÃ¼benpreise:
+	price list                          Listet alle aktuellen RÃ¼benpreise auf
+	price add <price>                   Schreibt den aktuellen RÃ¼benpreis in die Datenbank (Zeitzone Europe/Berlin)
+
 
 
 User: 
-"user"-Befehle werden nur für den Benutzer ausgeführt, der Ihn abgesetzt hat!
+Sofern kein Benutzername angegeben werden kann gilt das command fÃ¼r den ausfÃ¼hrenden!
 
-	user register                       Registriert den Benutzer in der $RÜBot Datenbank.
-	user delete (geht noch nicht)       Löscht den Benutzer unwiderruflich aus der Datenbank.
-	user addinfo fruit <fruit>          Fügt die native Frucht dem Profil hinzu. (pear, cherry, orange, apple, peach)
+	user register                       Registriert den Benutzer in der $RÃœBot Datenbank.
+	user delete							LÃ¶scht den Benutzer unwiderruflich aus der Datenbank.
+	
+	user addinfo fruit <fruit>          FÃ¼gt die native Frucht dem Profil hinzu. (pear, cherry, orange, apple, peach)
+	user addinfo pirate					markiert user als Piraten (arr)
+	user addinfo fc	<friendcode> (TODO)	FÃ¼gt den Freundescode des Nutzers hinzu.
+	user show <username> (TODO)			Zeigt die Daten eines bestimmten Benutzers an. Freilassen fÃ¼r sich selbst.
 	
 
-Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
-Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
-Alle an den Bot gerichteten Nachrichten werden gespeichert und nach 3 Tagen gelöscht.
+FÃ¼r Feedback oder informationen bezÃ¼glich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
+Fragt mich nicht warum die Commands englisch sind, ich weiÃŸ es doch auch nicht :(
+Alle an den Bot gerichteten Nachrichten werden gespeichert und nach 3 Tagen gelÃ¶scht.
 ```
