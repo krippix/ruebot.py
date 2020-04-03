@@ -1,0 +1,22 @@
+```
+Optionen:
+	help								Gibt diese hilfe aus.
+
+
+Rübenpreise:
+	price add <price>                   Schreibt den aktuellen Rübenpreis in die Datenbank (Zeitzone Europe/Berlin)
+	price list                          Listet alle aktuellen Rübenpreise auf
+
+
+User: 
+"user"-Befehle werden nur für den Benutzer ausgeführt, der Ihn abgesetzt hat!
+
+	user register                       Registriert den Benutzer in der $RÜBot Datenbank.
+	user delete (geht noch nicht)       Löscht den Benutzer unwiderruflich aus der Datenbank.
+	user addinfo fruit <fruit>          Fügt die native Frucht dem Profil hinzu. (pear, cherry, orange, apple, peach)
+	
+
+Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
+Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
+Alle an den Bot gerichteten Nachrichten werden gespeichert und nach 3 Tagen gelöscht.
+```
