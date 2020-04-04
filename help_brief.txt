@@ -1,0 +1,23 @@
+```
+$RÜBot v.1.0.1
+
+Liste der Commands.
+Für details: '$RÜBot help full'
+
+help
+help full
+
+list price
+list users
+list user <username>
+                      
+price add <price>
+
+user register
+user delete                  
+	
+user addinfo fruit <fruit>          
+user addinfo pirate <param> (TODO) 
+user addinfo fc <friendcode>
+
+```

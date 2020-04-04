@@ -22,6 +22,7 @@ notreg_txt = "Benutzer ist nicht registriert. Schreibe '$RÜBot user register' u
 msg_wherehelp = "'$RÜBot help' für eine Liste der Befehle"
 msg_missingparam = "Fehler - Fehlender Parameter. "+msg_wherehelp
 msg_toomanyparam = "Fehler - Zu viele Parameter. "+msg_wherehelp
+msg_unknowncommand = "Fehler - unbekannter Befehl. "+msg_wherehelp
 
 
 @client.event
@@ -37,11 +38,7 @@ async def on_message(message):
     
     #Write userdate into string
     author_id = message.author.id
-    author_displayname = str(message.author)
-    #TEST
-    #author_id = "123456789"
-    #author_displayname = ""
-    
+    author_displayname = str(message.author) 
    
     #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
@@ -57,15 +54,26 @@ async def on_message(message):
         message_split = message_tmp.split(" ")
         print(message_split)
         
-        #HELP START
+        #HELP  START
         try:
-            if message_split[0] == "help":
-                helpmsg = open("help.txt", "r")
-                await message.channel.send(helpmsg.read())
+            if message_split[0] == "help" and message_split[1] == "full": 
+                helpmsg = open("help_full.txt", "r")
+                await message.channel.send("Komplette Hilfe als direktnachricht gesendet!")
+                await message.author.send(helpmsg.read())
                 return
         except IndexError:
-            await message.channel.send(msg_missingparam)
             return
+
+        finally:
+            try:
+                if message_split[0] == "help" and message_split[1] != "full":
+                    helpmsg = open("help_brief.txt", "r")
+                    await message.channel.send(helpmsg.read())
+                    return
+            except IndexError:
+                await message.channel.send(msg_missingparam)
+                return
+
         #Help END
         
         
@@ -119,7 +127,7 @@ async def on_message(message):
                                 return
                             elif message_split[2] == "fruit" and len(message_split) == 3:
                                 #Parameter is missing
-                                await message.channel.send("Fehler - fehlender Parameter <fruit>")
+                                await message.channel.send(msg_missingparam)
                                 return
                             
                             elif message_split[2] == "fruit" and len(message_split) > 4:
@@ -132,7 +140,26 @@ async def on_message(message):
                         #USER ADDINFO FRUIT END
                         
                         #USER ADDINFO FC START
-                        #TODO
+                        try:
+                            if message_split[2] == "fc" and len(message_split) == 4:
+                                logging.debug("fc")
+                                
+                                #Fügt Friendcode dem Benutzereintrag in der db hinzu
+                                await message.channel.send(ruebotActions.addinfoFC(author_id, message_split[3]))
+                                return
+                            elif message_split[2] == "fc" and len(message_split) == 3:
+                                #Parameter is missing
+                                await message.channel.send(msg_missingparam)
+                                return
+                            
+                            elif message_split[2] == "fc" and len(message_split) > 4:
+                                logging.info(msg_toomanyparam)
+                                await message.channel.send(msg_toomanyparam)
+                                return
+                            
+                        except IndexError:
+                            pass
+                            
                         #USER ADDINFO FC END
                 
                 except IndexError:
@@ -160,6 +187,8 @@ async def on_message(message):
                         logging.info("Fehler - fehlender Parameter <price>")
                         await message.channel.send("Fehler - fehlender Parameter <price>")
                         return
+                    else:
+                        await message.channel.send(msg_unknowncommand)
                 except IndexError:
                     pass
                 #PRICE ADD END
@@ -199,7 +228,8 @@ async def on_message(message):
                 #LIST USERS START
                 try:
                     if message_split[1] == "users" and len(message_split) == 2:
-                        ruebotActions.listUsers()
+                        await message.author.send(ruebotActions.listUsers(None))
+                        await message.channel.send("Liste als direktnachricht gesendet!")
                         return
 
                     elif message_split[1] == "users" and len(message_split) > 2:
@@ -209,6 +239,24 @@ async def on_message(message):
                 except IndexError:
                     pass
                 #LIST USERS END
+                
+                #LIST USER <USERNAME> START
+                try:
+                    #LIST USER without username parameter
+                    if message_split[1] == "user" and len(message_split) == 2:
+                        await message.channel.send(ruebotActions.listUsers(author_displayname))
+                        return
+                        #TODO: sss
+                    #LIST USER <USERNAME>
+                    elif message_split[1] == "user" and len(message_split) == 3:
+                        await message.channel.send(ruebotActions.listUsers(message_split[2]))
+                        return
+                        #TODO: ssss
+                except IndexError:
+                    pass
+                #LIST USER <USERNAME> END
+                
+                
         except IndexError:
             pass
         #LIST END
@@ -216,7 +264,7 @@ async def on_message(message):
         
     #Bot aufgerufen, ohne Parameter anzugeben
     elif message.content == callbot1 or message.content == callbot2:
-        await message.channel.send('Fehlende Parameter! "$RÜBot help" für eine Liste der Kommandos')
+        await message.channel.send('Fehlende Parameter! "$RÜBot help" oder "RÜBot help full" für eine Liste der Kommandos')
     #$RÜBot ende   
         
         

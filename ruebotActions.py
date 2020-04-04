@@ -83,7 +83,75 @@ def addinfoFruit(author_id, user_input):
         logging.error(e)
         return msg_databaseError
          
-#END addinfoFruit           
+#END addinfoFruit 
+
+def addinfoFC(author_id, user_input):
+    
+    if not userexists(author_id):
+        logging.info(msg_notregistered)
+        return msg_notregistered
+    
+
+    #MAKE sw uppercase
+    user_input = user_input.upper()
+
+    
+    #Cofirms wheather its a FC
+    friendcode_check = False
+    friendcode_final = "SW-1234-1234-1234"
+    
+    #"SW-1234-1234-1234"
+    if user_input[:3] == "SW-" and len(user_input) == 17:
+        
+        #Check if numbers between "-"
+        #Should be 123412341234
+        tmp_test = user_input[3:7]+user_input[8:12]+user_input[13:17]
+        #Should be "---"
+        tmp_test2 = user_input[2]+user_input[7]+user_input[12]
+
+        #Confirm if format is SW-1234-1234-1234
+        if tmp_test.isdigit() and tmp_test2 == "---":
+            friendcode_check = True
+            friendcode_final = user_input
+
+        else:
+            friendcode_check = False
+            
+    #"1234-1234-1234"
+    elif user_input[:4].isdigit() and len(user_input) == 14:
+
+        #should be 123412341234
+        tmp_test = user_input[0:4]+user_input[5:9]+user_input[10:14]
+        tmp_test2 = user_input[5]+user_input[10]
+        
+        if tmp_test.isdigit() and tmp_test2 == "--":
+            friendcode_check = True
+            friendcode_final = "SW-"+user_input
+        else:
+            friendcode_check = False
+
+    #123412341234
+    elif user_input[:12].isdigit() and len(user_input) == 12:
+        friendcode_final = "SW-"+user_input[0:4]+"-"+user_input[4:8]+"-"+user_input[8:12]
+        friendcode_check = True
+
+    else:
+        friendcode_check = False
+        return "Wrong Friendcode format"
+    
+    
+    if friendcode_check == False:
+        logging.info("Wrong Friendcode format")
+        return "Wrong Friendcode format"
+    
+    #DBconnection
+    try:
+        ruebDB.dbcommit("UPDATE users SET friendcode=%s WHERE id_pkey=%s",(friendcode_final, author_id))
+        return "Freundescode erfolgreich hinzugefügt!"
+    
+    except ruebDatabaseError as e:
+        logging.error(e)
+        return msg_databaseError        
 
 
 def priceAdd(turnip_price, author_id):
@@ -184,34 +252,49 @@ def listPrice():
 #END PRICELIST
 
 
-def listUsers():
-    
-    try:
-        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT displayname, fruit_id_fkey FROM users",(),)]
-    except ruebDatabaseError:
-        return msg_databaseError
+def listUsers(user_input):
+    #pass None if all users should be displayed
+    if user_input is None:
+        try:
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE NOT (u.id_pkey = 0 )",(),)]
+        except ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDatabaseError)
+            return msg_databaseError
         
     
-    if len(answer_tuple) == 0:
-        logging.error("Fehler - Keine Benutzer gefunden.")
-        return "Fehler - Keine Benutzer gefunden."
+        if len(answer_tuple) == 0:
+            logging.error("Fehler - Keine Benutzer gefunden.")
+            return "Fehler - Keine Benutzer gefunden."
+    #Username is defined
+    else:
+
+        user_input = user_input.lower()
+        
+        try:
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s",[user_input+"%"],)]
+        except ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDatabaseError)
+            return msg_databaseError
+        
+    
+        if len(answer_tuple) == 0:
+            logging.error("Fehler - Keine Benutzer gefunden.")
+            return "Fehler - Keine Benutzer gefunden."
+    
+    
     
     #prints input into string
     t = Texttable()
-    t.add_row(["Benutzer","Frucht"])
+    t.add_row(["Benutzer","Frucht", "Freundescode", "pirat / banned"])
     
-    i=0
+
     for x in answer_tuple:
         t.add_row(x)
-        print(x)
-        i += 1
-        print(i)
     
     answer = t.draw()
-
-    return answer                   
-
-         
+    
+    return "```\n"+answer+"```"                   
+    
 #--------------------------------------------------------------------------------
 #Check stuff
 #--------------------------------------------------------------------------------
