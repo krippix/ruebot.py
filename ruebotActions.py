@@ -127,14 +127,16 @@ def priceAdd(turnip_price, author_id):
         try:
             result = ruebDB.dbrequest('SELECT * FROM turnip_prices WHERE date=NOW()::date AND daytime=%s AND users_id_fkey=%s', (daytime, author_id))
             
-            return "Preis geändert auf "+str(turnip_price)   
+               
             #Check if db entry exists for that day
             if result is None:
                 ruebDB.dbcommit("INSERT INTO turnip_prices (price, date, daytime, users_id_fkey) VALUES (%s, NOW()::date, %s, %s)",(turnip_price, daytime, author_id))
+        
                 logging.info("Preis "+str(turnip_price)+" erfolgreich hinzugefügt.")
                 return "Preis "+str(turnip_price)+" erfolgreich hinzugefügt."
             else:
                 ruebDB.dbcommit("UPDATE turnip_prices SET price=%s WHERE date=NOW()::date AND daytime=%s AND users_id_fkey=%s",(turnip_price, daytime, author_id))
+                return "Preis geändert auf "+str(turnip_price)
         except ruebDatabaseError:
             return msg_databaseError
 #END PRICEADD                   

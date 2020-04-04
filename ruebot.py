@@ -157,8 +157,8 @@ async def on_message(message):
                         return
                 
                     elif message_split[1] == "add" and len(message_split) == 2:
-                        logging.info("Fehler - fehlender Parameter <fruit>")
-                        await message.channel.send("Fehler - fehlender Parameter <fruit>")
+                        logging.info("Fehler - fehlender Parameter <price>")
+                        await message.channel.send("Fehler - fehlender Parameter <price>")
                         return
                 except IndexError:
                     pass
