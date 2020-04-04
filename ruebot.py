@@ -62,17 +62,16 @@ async def on_message(message):
                 await message.author.send(helpmsg.read())
                 return
         except IndexError:
-            return
-
-        finally:
-            try:
-                if message_split[0] == "help" and message_split[1] != "full":
-                    helpmsg = open("help_brief.txt", "r")
-                    await message.channel.send(helpmsg.read())
-                    return
-            except IndexError:
-                await message.channel.send(msg_missingparam)
+            pass
+        print("TEST")
+        try:
+            if message_split[0] == "help":
+                helpmsg = open("help_brief.txt", "r")
+                await message.channel.send(helpmsg.read())
                 return
+        except IndexError:
+            await message.channel.send(msg_missingparam)
+            return
 
         #Help END
         
