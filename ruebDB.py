@@ -1,6 +1,9 @@
 import psycopg2
 import config
+import logging
 
+class ruebDatabaseError(Exception):
+    pass
 
 
 def dbrequest(sqlstatement, user_input):
@@ -37,11 +40,12 @@ def dbrequest(sqlstatement, user_input):
         #print("------ANSWER_END------")
         return answer
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logging.error(error)
+        raise ruebDatabaseError(error)
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            logging.info('dbrequest: Database connection closed.')
  
 def dbfetchall(sqlstatement, user_input):
     """ Connect to the PostgreSQL database server """
@@ -77,11 +81,12 @@ def dbfetchall(sqlstatement, user_input):
         #print("------ANSWER_END------")
         return answer
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logging.error(error)
+        raise ruebDatabaseError(error)
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.') 
+            logging.info('dbfetchall: Database connection closed.') 
 
 def dbcommit(sqlstatement, user_input):
     """ Connect to the PostgreSQL database server """
@@ -112,9 +117,10 @@ def dbcommit(sqlstatement, user_input):
         print("------ANSWER_END------")
         return answer
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logging.error(error)
+        raise ruebDatabaseError(error)
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            print('dbcommit: Database connection closed.')
 

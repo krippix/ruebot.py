@@ -95,7 +95,7 @@ async def on_message(message):
                 #USER DELETE START
                 try:
                     if message_split[1] == "delete" and len(message_split) == 2:
-                        logging.debug("delete")
+                        logging.debug("USER - DELETE")
                         await message.channel.send(ruebotActions.userdelete(author_id))
                         return
                 except IndexError:
@@ -139,13 +139,7 @@ async def on_message(message):
                     logging.debug("addinfo - IndexError")
                     pass
                 #USER ADDINFO END
-        
-        
-        
-        
-        
-        
-        
+                
         except IndexError:
             logging.info(msg_missingparam)
             await message.channel.send(msg_missingparam)
@@ -156,28 +150,16 @@ async def on_message(message):
         #PRICE START
         try:
             if message_split[0] == "price" and len(message_split) != 1:
-                
-                #PRICE LIST START
-                try:
-                    #print pricelist
-                    if message_split[1] == "list" and len(message_split) == 2:
-                        logging.debug("price - list")
-                        await message.channel.send(ruebotActions.priceList())
-                        
-                        return
-                    
-                except:
-                    pass
-                #PRICE LIST END
-                
                 #PRICE ADD START
                 try:
                     if message_split[1] == "add" and len(message_split) == 3:
-                        pass
+                        await message.channel.send(ruebotActions.priceAdd(message_split[2], author_id))                      
+                        return
                 
-                    elif len(message_split) == 2:
+                    elif message_split[1] == "add" and len(message_split) == 2:
                         logging.info("Fehler - fehlender Parameter <fruit>")
                         await message.channel.send("Fehler - fehlender Parameter <fruit>")
+                        return
                 except IndexError:
                     pass
                 #PRICE ADD END
@@ -192,6 +174,44 @@ async def on_message(message):
             pass
         #PRICE END
         
+        
+        #LIST START
+        try:
+            if message_split[0] == "list" and len(message_split) != 1:
+                logging.debug("LIST")
+                
+                #LIST PRICE START
+                try:
+                    if message_split[1] == "price" and len(message_split) == 2:
+        
+                        await message.channel.send(ruebotActions.listPrice())
+                        logging.debug("LIST - PRICE")
+                        return
+                        
+                    elif message_split[1] == "price" and len(message_split) > 2:
+                        logging.debug("LIST - PRICE: "+msg_toomanyparam)
+                        await message.channel.send(msg_toomanyparam)
+                        return
+                except IndexError:
+                    pass
+                #LIST PRICE END
+                
+                #LIST USERS START
+                try:
+                    if message_split[1] == "users" and len(message_split) == 2:
+                        ruebotActions.listUsers()
+                        return
+
+                    elif message_split[1] == "users" and len(message_split) > 2:
+                        logging.debug("LIST - USERS: "+msg_toomanyparam)
+                        await message.channel.send(msg_toomanyparam)
+                        return
+                except IndexError:
+                    pass
+                #LIST USERS END
+        except IndexError:
+            pass
+        #LIST END
         
         
     #Bot aufgerufen, ohne Parameter anzugeben
