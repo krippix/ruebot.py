@@ -153,6 +153,33 @@ def addinfoFC(author_id, user_input):
         logging.error(e)
         return msg_databaseError        
 
+def addinfoPirate(author_id, user_input):
+    
+    if not userexists(author_id):
+        logging.info(msg_notregistered)
+        return msg_notregistered
+    
+    #make input lowercase
+    user_input = user_input.lower()
+    
+    if user_input == "true":
+        pirate_final = True
+    elif user_input == "false":
+        pirate_final = False
+    else:
+        return user_input+" ist kein gültiges argument. Akzeptiert werden: true, false."
+    
+    #commit pirate status to db
+    try:
+        ruebDB.dbcommit("UPDATE users SET pirate=%s WHERE id_pkey=%s",(pirate_final, author_id))
+        if pirate_final:
+            return ":pirate_flag: Du wurdest als pirat markiert :pirate_flag:"
+        else:
+            return "Status Pirat wurde auf False aktualisiert!"
+    except ruebDatabaseError as e:
+        logging.error(e)
+        return msg_databaseError   
+    
 
 def priceAdd(turnip_price, author_id):
     #add price to db entry of user
@@ -188,8 +215,8 @@ def priceAdd(turnip_price, author_id):
             daytime = True                 
         
         #sonntag ist 0
-        if time.strftime("%w") == 0:
-            return "Fehler - Preise können Sonntags nicht aktualisiert werden."
+        if time.strftime("%w") == str(0) and daytime:
+            return "Fehler - Preise können Sonntag nachmittags nicht aktualisiert werden."
         
         
         try:

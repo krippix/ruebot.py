@@ -31,7 +31,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    
+
     #Exclude bot's messages
     if message.author == client.user:
         return
@@ -40,6 +40,13 @@ async def on_message(message):
     author_id = message.author.id
     author_displayname = str(message.author) 
    
+    
+    #TODO: Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
+    
+    
+    
+    
+    
     #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
     if message.content.startswith(callbot1 + ' ') or message.content.startswith(callbot2 + ' '):
@@ -75,9 +82,11 @@ async def on_message(message):
 
         #Help END
         
+        #TODO: BUY / SELL, Profittracker. Rüben verfallen nach einer woche.
+        
         
         #USER START
-        #TODO: Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
+       
         try:
             if message_split[0] == "user":
                 logging.debug("user")
@@ -141,7 +150,7 @@ async def on_message(message):
                         #USER ADDINFO FC START
                         try:
                             if message_split[2] == "fc" and len(message_split) == 4:
-                                logging.debug("fc")
+                                logging.debug("USER ADDINFO FC")
                                 
                                 #Fügt Friendcode dem Benutzereintrag in der db hinzu
                                 await message.channel.send(ruebotActions.addinfoFC(author_id, message_split[3]))
@@ -155,12 +164,31 @@ async def on_message(message):
                                 logging.info(msg_toomanyparam)
                                 await message.channel.send(msg_toomanyparam)
                                 return
-                            
                         except IndexError:
-                            pass
-                            
+                            pass   
                         #USER ADDINFO FC END
-                
+                        
+                        #USER ADDINFO PIRATE START
+                        try:
+                            if message_split[2] == "pirate" and len(message_split) == 4:
+                                logging.debug("USER ADDINFO PIRATE")
+                                
+                                #Fügt Friendcode dem Benutzereintrag in der db hinzu
+                                await message.channel.send(ruebotActions.addinfoPirate(author_id, message_split[3]))
+                                return
+                            elif message_split[2] == "pirate" and len(message_split) == 3:
+                                #Parameter is missing
+                                await message.channel.send(msg_missingparam)
+                                return
+                            
+                            elif message_split[2] == "pirate" and len(message_split) > 4:
+                                logging.info(msg_toomanyparam)
+                                await message.channel.send(msg_toomanyparam)
+                                return
+                        except IndexError:
+                            pass   
+                        
+                        #USER ADDINFO PIRATE END
                 except IndexError:
                     logging.debug("addinfo - IndexError")
                     pass

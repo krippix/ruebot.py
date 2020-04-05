@@ -17,7 +17,9 @@ user register
 user delete                  
 	
 user addinfo fruit <fruit>          
-user addinfo pirate <param> (TODO) 
+user addinfo pirate <true>/<false>
 user addinfo fc <friendcode>
+
+user deleteinfo fc (TODO)
 
 ```

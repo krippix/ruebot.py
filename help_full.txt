@@ -19,6 +19,8 @@ Sofern kein Benutzername angegeben werden kann gilt das command für den ausfüh
 	user addinfo pirate <param> (TODO)  Pirat (arr) Ja/Nein <param>: true oder false 
 	user addinfo fc <friendcode>        Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000
 	
+	user deleteinfo fc                  Löscht den Freundescode des betreffenden Benutzers
+	
 
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
