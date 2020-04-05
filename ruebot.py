@@ -70,7 +70,6 @@ async def on_message(message):
                 return
         except IndexError:
             pass
-        print("TEST")
         try:
             if message_split[0] == "help":
                 helpmsg = open("help_brief.txt", "r")
@@ -194,6 +193,32 @@ async def on_message(message):
                     pass
                 #USER ADDINFO END
                 
+                #USER DELETEINFO START
+                try:
+                    if message_split[1] == "deleteinfo":
+                        logging.debug("USER - DELETEINFO")
+                        
+                        #USER DELETEINFO FC START
+                        try:
+                            if message_split[2] == "fc" and len(message_split) == 3:
+                                logging.debug("USER - DELETEINFO - FC")
+                                #TODO:
+                                #Lösch den Freundescode
+                                await message.channel.send(ruebotActions.deleteinfoFC(author_id))
+                                return
+                            elif message_split[2] == "fc" and len(message_split) > 3:
+                                #Parameter is missing
+                                logging.info(msg_toomanyparam)
+                                await message.channel.send(msg_toomanyparam)
+                                return      
+                        except IndexError:
+                            pass
+                        #USER DELETEINFO FRUIT END
+                except IndexError:
+                    logging.debug("USER DELETEINFO - IndexError")
+                    pass
+                #USER DELETEINFO END
+                
         except IndexError:
             logging.info(msg_missingparam)
             await message.channel.send(msg_missingparam)
@@ -273,12 +298,10 @@ async def on_message(message):
                     if message_split[1] == "user" and len(message_split) == 2:
                         await message.channel.send(ruebotActions.listUsers(author_displayname))
                         return
-                        #TODO: sss
                     #LIST USER <USERNAME>
                     elif message_split[1] == "user" and len(message_split) == 3:
                         await message.channel.send(ruebotActions.listUsers(message_split[2]))
                         return
-                        #TODO: ssss
                 except IndexError:
                     pass
                 #LIST USER <USERNAME> END
@@ -287,6 +310,9 @@ async def on_message(message):
         except IndexError:
             pass
         #LIST END
+        
+        #WENN NICHTS AUFGEFANGEN WURDE
+        await message.channel.send('Fehlende Parameter oder unbekannter Command! "$RÜBot help" oder "RÜBot help full" für eine Liste der Kommandos')
         
         
     #Bot aufgerufen, ohne Parameter anzugeben

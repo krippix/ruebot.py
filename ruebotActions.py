@@ -63,6 +63,7 @@ def addinfoFruit(author_id, user_input):
         "birnen": "3",
         "peach": "4",
         "pfirsich": "4",
+        "arsch": "4",
         "orange": "5",
         "apple": "6",
         "apfel": "6"
@@ -180,6 +181,19 @@ def addinfoPirate(author_id, user_input):
         logging.error(e)
         return msg_databaseError   
     
+def deleteinfoFC(author_id):
+    if not userexists(author_id):
+        logging.info(msg_notregistered)
+        return msg_notregistered
+    
+    try:
+        ruebDB.dbcommit("UPDATE users SET friendcode=%s WHERE id_pkey=%s",("<unknown>",author_id))
+        return "Freundescode erfolgreich gelöscht!"
+    
+    except ruebDatabaseError as e:
+        logging.error(e)
+        return msg_databaseError       
+
 
 def priceAdd(turnip_price, author_id):
     #add price to db entry of user

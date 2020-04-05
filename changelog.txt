@@ -1,0 +1,5 @@
+$RÜBot v.1.0.1
+
+- Friendcodes können jetzt gelöscht werden.
+- das Pirate Attribut kann jetzt hinzugefügt werden.
+- Benutzer können jetzt einzeln aufgelistet werden.
