@@ -20,10 +20,9 @@ def userregister(author_id, author_displayname):
         
         #Writing user into db
         try:
-            if ruebDB.dbcommit("INSERT INTO users (displayname, id_pkey, friendcode, fruits_id_fkey, pirate) VALUES (%s, %s, %s, %s, %s)", (author_displayname, author_id, "<unknown>", 1, "<unknown>")) is not None:
-                return'Benutzer '+author_displayname+' erfolgreich erstellt!'
-            else:
-                return "Fehler - Benutzer konnte nicht erstellt werden, bitte versuche es später nochmal."
+            ruebDB.dbcommit("INSERT INTO users (displayname, id_pkey, friendcode, fruits_id_fkey, pirate) VALUES (%s, %s, %s, %s, %s)", (author_displayname, author_id, "<unknown>", 1, "<unknown>"))
+            return'Benutzer '+author_displayname+' erfolgreich erstellt!'
+            
         except ruebDatabaseError:
             return msg_databaseError
 
@@ -335,7 +334,25 @@ def listUsers(user_input):
     answer = t.draw()
     
     return "```\n"+answer+"```"                   
+
+def updateDisplaynames(author_displayname, author_id):
+    try:
+        database_displayname = ruebDB.dbrequest("SELECT displayname FROM users where id_pkey=%s", [author_id])
+    except ruebDatabaseError:
+        return msg_databaseError
     
+    
+
+    if database_displayname[0] == author_displayname:
+        logging.info("Username remains unchanged")
+        return
+    else:
+        try:
+            ruebDB.dbcommit("UPDATE users SET displayname=%s WHERE id_pkey=%s", (author_displayname, author_id))
+        except ruebDatabaseError as msg:
+            logging.warning("UPDATE USERNAME: "+msg)
+
+    #"UPDATE turnip_prices SET users_id_fkey=000000000000000000 WHERE users_id_fkey=%s"
 #--------------------------------------------------------------------------------
 #Check stuff
 #--------------------------------------------------------------------------------

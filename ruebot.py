@@ -3,6 +3,7 @@ import sys
 import ruebotActions
 import config
 import logging
+from ruebotActions import userexists
 
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("discord").setLevel(logging.WARNING)
@@ -41,8 +42,8 @@ async def on_message(message):
     author_displayname = str(message.author) 
    
     
-    #TODO: Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
     
+        
     
     
     
@@ -50,6 +51,12 @@ async def on_message(message):
     #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
     if message.content.startswith(callbot1 + ' ') or message.content.startswith(callbot2 + ' '):
+        
+        #Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
+        if ruebotActions.userexists(author_id):
+            logging.info("UPDATE USERNAME")
+            logging.info(ruebotActions.updateDisplaynames(author_displayname, author_id))
+            
         
         #Removes callbot1 or callbot2 from messages
         message_tmp = message.content
@@ -95,6 +102,7 @@ async def on_message(message):
                         logging.debug("register")    
                         #Checks if user is registered and returns result as string
                         await message.channel.send(ruebotActions.userregister(author_id, author_displayname))
+                        return
                     elif message_split[1] == "register":
                         logging.debug("register - too many parameters")
                         #Too many parameters
@@ -202,8 +210,6 @@ async def on_message(message):
                         try:
                             if message_split[2] == "fc" and len(message_split) == 3:
                                 logging.debug("USER - DELETEINFO - FC")
-                                #TODO:
-                                #Lösch den Freundescode
                                 await message.channel.send(ruebotActions.deleteinfoFC(author_id))
                                 return
                             elif message_split[2] == "fc" and len(message_split) > 3:
