@@ -41,12 +41,7 @@ async def on_message(message):
     author_id = message.author.id
     author_displayname = str(message.author) 
    
-    
-    
-        
-    
-    
-    
+
     
     #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
@@ -88,7 +83,25 @@ async def on_message(message):
 
         #Help END
         
-        #TODO: BUY / SELL, Profittracker. Rüben verfallen nach einer woche.
+        #TODO: SELL, Profittracker. Rüben verfallen nach einer woche.
+        
+        #TODO: BUY START
+        try:
+            if message_split[0] == "buy" and message_split[1].isdigit() and message_split[2] == "for" and message_split[3].isdigit() and len(message_split) == 4: 
+                logging.debug("BUY x FOR y")
+                await message.channel.send(ruebotActions.buyrueb(author_id, message_split[1], message_split[3]))
+                return
+            elif message_split[0] == "buy" and len(message_split) > 4:
+                await message.channel.send(msg_toomanyparam)
+                return
+            elif message_split[0] == "buy" and len(message_split) < 4:
+                await message.channel.send(msg_missingparam)
+                return
+        except IndexError:
+            pass
+        
+        #BUY END
+        
         
         
         #USER START
@@ -271,7 +284,7 @@ async def on_message(message):
                 try:
                     if message_split[1] == "price" and len(message_split) == 2:
         
-                        await message.channel.send(ruebotActions.listPrice())
+                        await message.channel.send(ruebotActions.listPrice(author_id))
                         logging.debug("LIST - PRICE")
                         return
                         

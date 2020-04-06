@@ -25,6 +25,56 @@ def userregister(author_id, author_displayname):
             
         except ruebDatabaseError:
             return msg_databaseError
+#END USER REGISTER
+
+
+
+def buyrueb(author_id, quantity, price):
+    
+    if not userexists(author_id):
+        logging.info(msg_notregistered)
+        return msg_notregistered
+    
+    
+    if int(quantity) % 10 != 0:
+        return "Rüben konnen nur in 10er Schritten gekauft werden!"
+    
+    if int(price) < 1 or int(price) > 1000:
+        return "Price muss zwischen 1 und 1000 liegen!"
+    
+    #TODO: Prüfen ob es für diese Woche bereits angelegt wurde
+    #Kalenderwoche in Python handlen SQL ist zu umständlich.
+    # NOW()::date bleibt denke ich erstmal. Obwohl die Zeit bei rübot liegen sollte.
+    try:
+        answer_tuple = ruebDB.dbrequest("SELECT * FROM users u JOIN trade_week t_w ON u.id_pkey = t_w.users_id_fkey WHERE t_w.week = (SELECT EXTRACT (WEEK FROM NOW())) u.id_pkey=%s ",[0],)
+        print(answer_tuple)
+        return answer_tuple
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    except ruebDatabaseError:
+        return msg_databaseError
+    
+    
+    
+    
+    #try:
+        #ruebDB.dbcommit("INSERT INTO trade_buys (quantity, price, date, trade_week_id_fkey) VALUES (10, 100, NOW()::date, 1) WHERE ", user_input)
+    #except ruebDatabaseError:
+        #return msg_databaseError
+    
+    
+    
+    return "Das könnte ein price add sein amk"
+#END BUYRUEB
+
+
 
 def userdelete(author_id):
     if userexists(author_id):
@@ -39,6 +89,9 @@ def userdelete(author_id):
             return msg_databaseError
     else:
         return "Benutzer existiert nicht."    
+#END USERDELETE
+
+
 
 def addinfoFruit(author_id, user_input):
     #Add the fruit to your user
@@ -81,9 +134,10 @@ def addinfoFruit(author_id, user_input):
         return "Unbekannte Frucht; Akzeptierte Früchte: Birne, Kirsche, Orange, Apfel und Pfirsich"  
     except ruebDatabaseError as e:
         logging.error(e)
-        return msg_databaseError
-         
+        return msg_databaseError         
 #END addinfoFruit 
+
+
 
 def addinfoFC(author_id, user_input):
     
@@ -152,6 +206,9 @@ def addinfoFC(author_id, user_input):
     except ruebDatabaseError as e:
         logging.error(e)
         return msg_databaseError        
+#END ADDINFO FC
+
+
 
 def addinfoPirate(author_id, user_input):
     
@@ -179,6 +236,9 @@ def addinfoPirate(author_id, user_input):
     except ruebDatabaseError as e:
         logging.error(e)
         return msg_databaseError   
+    #END ADDINFOPIRATE
+    
+    
     
 def deleteinfoFC(author_id):
     if not userexists(author_id):
@@ -192,6 +252,8 @@ def deleteinfoFC(author_id):
     except ruebDatabaseError as e:
         logging.error(e)
         return msg_databaseError       
+#DELETE INFO FC END
+
 
 
 def priceAdd(turnip_price, author_id):
@@ -250,10 +312,9 @@ def priceAdd(turnip_price, author_id):
 #END PRICEADD                   
 
 
-def listPrice():
+def listPrice(author_id):
     #List all prices of the current day and daytime
-    
-
+        
     #checks if it works
     if time.strftime("%p"):                
         
@@ -268,14 +329,36 @@ def listPrice():
         return "Fehler - Eintrag konnte nicht erstellt werden, bitte versuche es später erneut."           
                 
     #       
-    try:
-        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s ORDER BY t.price DESC",(daytime,))]
-        if len(answer_tuple) == 0:
-            logging.info("Keine Rübenpreise verfügbar")
-            return "Bisher sind keine Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
     
+    try:
+        #Retrieve whether user is marked as pirate
+        answer_tuple = ruebDB.dbrequest("SELECT pirate FROM users WHERE id_pkey=%s", [author_id],)
+        logging.info(answer_tuple)
+        
+        #Check if pirate is true
+        if answer_tuple[0] == 'true':
+            logging.debug("PIRATE = TRUE")
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND pirate='true' ORDER BY t.price DESC",(daytime,))]
+            tablename = ":pirate_flag:Piratendaten:pirate_flag:: "
+            
+            if len(answer_tuple) == 0:
+                logging.info("Keine Rübenpreise verfügbar")
+                return "Bisher sind keine :pirate_flag:-Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
+        
+        
+        #Regular users:
+        else:
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND NOT pirate='true' ORDER BY t.price DESC",(daytime,))]
+            tablename = "Nomale Daten: "
+            if len(answer_tuple) == 0:
+                logging.info("Keine Rübenpreise verfügbar")
+                return "Bisher sind keine Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
+
     except ruebDatabaseError:
         return msg_databaseError
+    #except TypeError:
+
+    
     
     #prints input into string
     t = Texttable()
@@ -288,7 +371,7 @@ def listPrice():
     
     print(answer)
     
-    return "```\n"+answer+"```"
+    return tablename+"\n```\n"+answer+"```"
 #END PRICELIST
 
 
@@ -311,7 +394,7 @@ def listUsers(user_input):
         user_input = user_input.lower()
         
         try:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s",[user_input+"%"],)]
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[user_input+"%"],)]
         except ruebDatabaseError:
             logging.error("LIST - USERS: "+ruebDatabaseError)
             return msg_databaseError
@@ -342,7 +425,7 @@ def updateDisplaynames(author_displayname, author_id):
         return msg_databaseError
     
     
-
+    
     if database_displayname[0] == author_displayname:
         logging.info("Username remains unchanged")
         return

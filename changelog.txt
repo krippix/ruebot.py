@@ -1,7 +1,13 @@
-$RÜBot v.1.0.1
+$RÜBot 
+
+v.1.0.1
 
 - Friendcodes können jetzt gelöscht werden.
 - das Pirate Attribut kann jetzt hinzugefügt werden.
 - Benutzer können jetzt einzeln aufgelistet werden.
 - Die Benutzernamen von $RÜBot usern werden aktualisiert, sollten sie sich ändern.
-- Problem beim Benutzer erstellen behoben.
+- Problem beim Benutzer erstellen behoben
+
+v.1.1.0-beta
+
+- Buy und sell hinzugefügt.
