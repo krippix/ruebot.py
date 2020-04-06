@@ -1,9 +1,15 @@
-import discord
+#python native
+import logging
 import sys
+#part of project
 import ruebotActions
 import config
-import logging
-from ruebotActions import userexists
+import getInfo
+#external
+import discord #discord.py
+
+
+
 
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("discord").setLevel(logging.WARNING)
@@ -33,27 +39,26 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
-    #Exclude bot's messages
+    #Exclude bot's msg
     if message.author == client.user:
         return
     
     #Write userdate into string
     author_id = message.author.id
     author_displayname = str(message.author) 
-   
-
+    
     
     #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
-    if message.content.startswith(callbot1 + ' ') or message.content.startswith(callbot2 + ' '):
+    if message.content.lower().startswith(callbot1 + ' '):
         
         #Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
-        if ruebotActions.userexists(author_id):
+        if getInfo.userexists(author_id):
             logging.info("UPDATE USERNAME")
-            logging.info(ruebotActions.updateDisplaynames(author_displayname, author_id))
+            logging.info(getInfo.updateDisplaynames(author_displayname, author_id))
             
         
-        #Removes callbot1 or callbot2 from messages
+        #Removes callbot1 or callbot2 from msg
         message_tmp = message.content
         message_tmp = message_tmp[7:]
         logging.info(author_displayname + " schreibt: " + message_tmp)
@@ -87,7 +92,7 @@ async def on_message(message):
         
         #TODO: BUY START
         try:
-            if message_split[0] == "buy" and message_split[1].isdigit() and message_split[2] == "for" and message_split[3].isdigit() and len(message_split) == 4: 
+            if message_split[0] == "buy" and message_split[1].isdigit() and message_split[2] == "at" and message_split[3].isdigit() and len(message_split) == 4: 
                 logging.debug("BUY x FOR y")
                 await message.channel.send(ruebotActions.buyrueb(author_id, message_split[1], message_split[3]))
                 return
@@ -318,8 +323,8 @@ async def on_message(message):
                         await message.channel.send(ruebotActions.listUsers(author_displayname))
                         return
                     #LIST USER <USERNAME>
-                    elif message_split[1] == "user" and len(message_split) == 3:
-                        await message.channel.send(ruebotActions.listUsers(message_split[2]))
+                    elif message_split[1] == "user" and len(message_split) >= 3:
+                        await message.channel.send(ruebotActions.listUsers(message_split[2:]))
                         return
                 except IndexError:
                     pass

@@ -13,8 +13,8 @@ list user <username>
                       
 price add <price>
 
-buy <quantity> for <price> (TODO)
-sell <quantity> for <price> (TODO)
+buy <quantity> at <price> (TODO)
+sell <quantity> at <price> (TODO)
 
 user register
 user delete                  

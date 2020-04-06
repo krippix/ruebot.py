@@ -1,16 +1,18 @@
+#python native
 import logging
-import ruebDB
 import time
+#part of project
+import ruebDB
+import getInfo
+import msg
+#external
 from texttable import Texttable
-from ruebDB import ruebDatabaseError
 
-msg_notregistered = "Du musst dich registrieren um diesen Befehl nutzen zu können: '$RÜBot user register'"
-msg_databaseError = "Fehler bei der Datenbankverbindung - Versuche es später nochmal."
 
 def userregister(author_id, author_displayname):
     
     #Pr�fen ob Benutzer bereits existiert
-    if userexists(author_id):
+    if getInfo.userexists(author_id):
         logging.info("Benutzer existiert bereits.")
         return "Benutzer existiert bereits."
     
@@ -23,51 +25,62 @@ def userregister(author_id, author_displayname):
             ruebDB.dbcommit("INSERT INTO users (displayname, id_pkey, friendcode, fruits_id_fkey, pirate) VALUES (%s, %s, %s, %s, %s)", (author_displayname, author_id, "<unknown>", 1, "<unknown>"))
             return'Benutzer '+author_displayname+' erfolgreich erstellt!'
             
-        except ruebDatabaseError:
-            return msg_databaseError
+        except ruebDB.ruebDatabaseError:
+            return msg.DbError()
 #END USER REGISTER
 
 
 
 def buyrueb(author_id, quantity, price):
     
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
     
+    #Check if Number of Rüb is dividable by 10
     if int(quantity) % 10 != 0:
         return "Rüben konnen nur in 10er Schritten gekauft werden!"
     
     if int(price) < 1 or int(price) > 1000:
         return "Price muss zwischen 1 und 1000 liegen!"
     
+    
+    #Get current sunday
+    date_sunday = getInfo.FirstDayOfWeek(time.strftime("%Y-%m-%d"))
+    
+    
+    
     #TODO: Prüfen ob es für diese Woche bereits angelegt wurde
     #Kalenderwoche in Python handlen SQL ist zu umständlich.
     # NOW()::date bleibt denke ich erstmal. Obwohl die Zeit bei rübot liegen sollte.
+    
+    #TODO: nur durchlassen wenn die Woche noch nicht existiert
+    #Anlegen einer trade_week /es wird angenommen dass noch keine existiert
     try:
-        answer_tuple = ruebDB.dbrequest("SELECT * FROM users u JOIN trade_week t_w ON u.id_pkey = t_w.users_id_fkey WHERE t_w.week = (SELECT EXTRACT (WEEK FROM NOW())) u.id_pkey=%s ",[0],)
-        print(answer_tuple)
-        return answer_tuple
+        ruebDB.dbcommit("INSERT INTO trade_week (date_sunday, users_id_fkey) VALUES (%s, %s)", (str(date_sunday), author_id))
+        logging.info("trade_week für "+str(author_id)+" angelegt")
+    except ruebDB.ruebDatabaseError:
+        logging.error("trade_week anlegen Fehlgeschlagen: "+msg.DbError())
+        return msg.DbError()
     
     
     
     
+    #Check if trading_week already exist for that user in this week
+    
+    #Get current date from db and 
     
     
     
-    
-    
-    except ruebDatabaseError:
-        return msg_databaseError
-    
+
     
     
     
     #try:
         #ruebDB.dbcommit("INSERT INTO trade_buys (quantity, price, date, trade_week_id_fkey) VALUES (10, 100, NOW()::date, 1) WHERE ", user_input)
-    #except ruebDatabaseError:
-        #return msg_databaseError
+    #except ruebDB.ruebDatabaseError:
+        #return messages.DbError()
     
     
     
@@ -77,16 +90,16 @@ def buyrueb(author_id, quantity, price):
 
 
 def userdelete(author_id):
-    if userexists(author_id):
+    if getInfo.userexists(author_id):
         try:
             ruebDB.dbcommit("UPDATE turnip_prices SET users_id_fkey=000000000000000000 WHERE users_id_fkey=%s", [author_id])
             ruebDB.dbcommit("DELETE FROM users WHERE id_pkey=%s", [author_id])
             logging.info("Benutzer wurde erfolgreich gelöscht!")
             return "Benutzer wurde erfolgreich gelöscht!"
                 
-        except ruebDatabaseError:
+        except ruebDB.ruebDatabaseError:
             logging.error("Benutzer konnte nicht gelöscht werden.")
-            return msg_databaseError
+            return msg.DbError()
     else:
         return "Benutzer existiert nicht."    
 #END USERDELETE
@@ -97,9 +110,9 @@ def addinfoFruit(author_id, user_input):
     #Add the fruit to your user
     
     
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
     
     elif user_input.lower() == "penis":
@@ -132,18 +145,18 @@ def addinfoFruit(author_id, user_input):
         #unknown fruit
         logging.info("Unknown Fruit: "+fruit_final)
         return "Unbekannte Frucht; Akzeptierte Früchte: Birne, Kirsche, Orange, Apfel und Pfirsich"  
-    except ruebDatabaseError as e:
+    except ruebDB.ruebDatabaseError as e:
         logging.error(e)
-        return msg_databaseError         
+        return msg.DbError()         
 #END addinfoFruit 
 
 
 
 def addinfoFC(author_id, user_input):
     
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
 
     #MAKE sw uppercase
@@ -203,18 +216,18 @@ def addinfoFC(author_id, user_input):
         ruebDB.dbcommit("UPDATE users SET friendcode=%s WHERE id_pkey=%s",(friendcode_final, author_id))
         return "Freundescode erfolgreich hinzugefügt!"
     
-    except ruebDatabaseError as e:
+    except ruebDB.ruebDatabaseError as e:
         logging.error(e)
-        return msg_databaseError        
+        return msg.DbError()        
 #END ADDINFO FC
 
 
 
 def addinfoPirate(author_id, user_input):
     
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
     #make input lowercase
     user_input = user_input.lower()
@@ -232,26 +245,26 @@ def addinfoPirate(author_id, user_input):
         if pirate_final:
             return ":pirate_flag: Du wurdest als pirat markiert :pirate_flag:"
         else:
-            return "Status Pirat wurde auf False aktualisiert!"
-    except ruebDatabaseError as e:
+            return "Du bist wieder ein ehrwürdiger Bürger! ⁿᵃʲᵃ"
+    except ruebDB.ruebDatabaseError as e:
         logging.error(e)
-        return msg_databaseError   
+        return msg.DbError()   
     #END ADDINFOPIRATE
     
     
     
 def deleteinfoFC(author_id):
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
     try:
         ruebDB.dbcommit("UPDATE users SET friendcode=%s WHERE id_pkey=%s",("<unknown>",author_id))
         return "Freundescode erfolgreich gelöscht!"
     
-    except ruebDatabaseError as e:
+    except ruebDB.ruebDatabaseError as e:
         logging.error(e)
-        return msg_databaseError       
+        return msg.DbError()       
 #DELETE INFO FC END
 
 
@@ -261,9 +274,9 @@ def priceAdd(turnip_price, author_id):
     
     
     #check if user exists
-    if not userexists(author_id):
-        logging.info(msg_notregistered)
-        return msg_notregistered
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
     
     
     #Check if price is viable
@@ -307,9 +320,10 @@ def priceAdd(turnip_price, author_id):
             else:
                 ruebDB.dbcommit("UPDATE turnip_prices SET price=%s WHERE date=NOW()::date AND daytime=%s AND users_id_fkey=%s",(turnip_price, daytime, author_id))
                 return "Preis geändert auf "+str(turnip_price)
-        except ruebDatabaseError:
-            return msg_databaseError
+        except ruebDB.ruebDatabaseError:
+            return msg.DbError()
 #END PRICEADD                   
+
 
 
 def listPrice(author_id):
@@ -354,8 +368,8 @@ def listPrice(author_id):
                 logging.info("Keine Rübenpreise verfügbar")
                 return "Bisher sind keine Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
 
-    except ruebDatabaseError:
-        return msg_databaseError
+    except ruebDB.ruebDatabaseError:
+        return msg.DbError()
     #except TypeError:
 
     
@@ -375,14 +389,16 @@ def listPrice(author_id):
 #END PRICELIST
 
 
+
+
 def listUsers(user_input):
     #pass None if all users should be displayed
     if user_input is None:
         try:
             answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE NOT (u.id_pkey = 0 )",(),)]
-        except ruebDatabaseError:
-            logging.error("LIST - USERS: "+ruebDatabaseError)
-            return msg_databaseError
+        except ruebDB.ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
+            return msg.DbError()
         
     
         if len(answer_tuple) == 0:
@@ -395,9 +411,9 @@ def listUsers(user_input):
         
         try:
             answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[user_input+"%"],)]
-        except ruebDatabaseError:
-            logging.error("LIST - USERS: "+ruebDatabaseError)
-            return msg_databaseError
+        except ruebDB.ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
+            return msg.DbError()
         
     
         if len(answer_tuple) == 0:
@@ -418,37 +434,6 @@ def listUsers(user_input):
     
     return "```\n"+answer+"```"                   
 
-def updateDisplaynames(author_displayname, author_id):
-    try:
-        database_displayname = ruebDB.dbrequest("SELECT displayname FROM users where id_pkey=%s", [author_id])
-    except ruebDatabaseError:
-        return msg_databaseError
-    
-    
-    
-    if database_displayname[0] == author_displayname:
-        logging.info("Username remains unchanged")
-        return
-    else:
-        try:
-            ruebDB.dbcommit("UPDATE users SET displayname=%s WHERE id_pkey=%s", (author_displayname, author_id))
-        except ruebDatabaseError as msg:
-            logging.warning("UPDATE USERNAME: "+msg)
 
-    #"UPDATE turnip_prices SET users_id_fkey=000000000000000000 WHERE users_id_fkey=%s"
-#--------------------------------------------------------------------------------
-#Check stuff
-#--------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
-def userexists(author_id):
-    
-    try:
-        dbanswer = ruebDB.dbrequest('SELECT id_pkey FROM users WHERE id_pkey=%s', [author_id])
-    except ruebDatabaseError:
-        return msg_databaseError
-    
-    #Check if db-entry of user exists
-    if dbanswer is None:
-        return False
-    
-    return True

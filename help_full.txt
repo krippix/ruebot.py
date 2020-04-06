@@ -10,8 +10,8 @@ $RÜBot v.1.0.0
                       
 	price add <price>                   Schreibt den aktuellen Rübenpreis in die Datenbank (Zeitzone Europe/Berlin)
 	
-	buy <quantity> for <price> (TODO)   Notiert den kauf von x Rüben für y Sternis
-	sell <quantity> for <price> (TODO)  Notiert den verkauf von x Rüben für y Sternis
+	buy <quantity> at <price> (TODO)   Notiert den kauf von x Rüben für y Sternis
+	sell <quantity> at <price> (TODO)  Notiert den verkauf von x Rüben für y Sternis
 
 Sofern kein Benutzername angegeben werden kann gilt das command für den ausführenden!
 
