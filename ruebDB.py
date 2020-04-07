@@ -2,6 +2,13 @@ import psycopg2
 import config
 import logging
 
+
+test = dbrequest("SELECT * FROM users WHERE id_pkey=1", "")
+
+print(type(test))
+
+
+
 class ruebDatabaseError(Exception):
     pass
 

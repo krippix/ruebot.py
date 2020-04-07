@@ -245,7 +245,7 @@ def addinfoPirate(author_id, user_input):
         if pirate_final:
             return ":pirate_flag: Du wurdest als pirat markiert :pirate_flag:"
         else:
-            return "Du bist wieder ein ehrwürdiger Bürger! ⁿᵃʲᵃ"
+            return "Arr, du wurdest als Landratte markiert."
     except ruebDB.ruebDatabaseError as e:
         logging.error(e)
         return msg.DbError()   

@@ -18,4 +18,4 @@ geplante Features
 
 - Buy und sell funktion.
 - Preisalarm
-- liste der letzten preise (der aktuellen Woche)
+- liste der letzten preise (der aktuellen Woche) list history
