@@ -33,7 +33,7 @@ def userexists(author_id):
     try:
         dbanswer = ruebDB.dbrequest('SELECT id_pkey FROM users WHERE id_pkey=%s', [author_id])
     except ruebDB.ruebDatabaseError:
-        return msg.msgDbError()
+        return msg.DbError()
     
     #Check if db-entry of user exists
     if dbanswer is None:

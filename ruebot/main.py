@@ -11,19 +11,15 @@ from ruebot import getInfo
 import discord #discord.py
 
 
-
-
+#SET logginglevel
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("discord").setLevel(logging.WARNING)
 logging.getLogger("websockets").setLevel(logging.WARNING)
 
-client = discord.Client()
-
+#Variable for calling the bot
 callbot = "$rübot" 
 
-
-
-
+client = discord.Client()
 
 
 #Text if user is not registered
@@ -50,13 +46,12 @@ async def on_message(message):
     author_displayname = str(message.author) 
     
     
-    #TODO: liste erstellen die durchgegangen wird mit allen möglichen aufrufparametern
     #check for $RÜBot
     if message.content.lower().startswith(callbot + ' '):
         
         #Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
         if getInfo.userexists(author_id):
-            logging.info("UPDATE USERNAME")
+            logging.info("CHECKING IF USERNAME NEEDS UPDATE")
             logging.info(getInfo.updateDisplaynames(author_displayname, author_id))
             
         
@@ -75,14 +70,13 @@ async def on_message(message):
             if message_split[0] == "help" and message_split[1] == "full": 
                 #helpmsg = open("help_full.txt", "r")
                 await message.channel.send("Komplette Hilfe als direktnachricht gesendet!")
-                await message.author.send(msg.helpFull())#helpmsg.read()
+                await message.author.send(msg.help_full())
                 return
         except IndexError:
             pass
         try:
             if message_split[0] == "help":
-                helpmsg = open("help_brief.txt", "r")
-                await message.channel.send(helpmsg.read())
+                await message.channel.send(msg.help_brief())
                 return
         except IndexError:
             await message.channel.send(msg_missingparam)
@@ -90,7 +84,11 @@ async def on_message(message):
 
         #Help END
         
+        
+        
         #TODO: SELL, Profittracker. Rüben verfallen nach einer woche.
+        
+        
         
         #TODO: BUY START
         try:

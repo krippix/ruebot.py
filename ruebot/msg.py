@@ -6,7 +6,7 @@ def DbError():
     return "Fehler bei der Datenbankverbindung - Versuche es später nochmal."
 
 
-def helpFull():
+def help_full():
     return """
 ```
 $RÜBot v.1.0.0
@@ -39,5 +39,38 @@ Sofern kein Benutzername angegeben werden kann gilt das command für den ausfüh
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
 Alle an den Bot gerichteten Nachrichten werden gespeichert (TODO) und nach 3 Tagen gelöscht.
+```
+"""
+
+def help_brief():
+    return """
+```
+$RÜBot v.1.0.1
+
+Liste der Commands.
+Für details: '$RÜBot help full'
+
+help
+help full
+
+list price
+list history
+list users
+list user <username>
+                      
+price add <price>
+
+buy <quantity> at <price> (TODO)
+sell <quantity> at <price> (TODO)
+
+user register
+user delete                  
+    
+user addinfo fruit <fruit>          
+user addinfo pirate <true>/<false>
+user addinfo fc <friendcode>
+
+user deleteinfo fc (TODO)
+
 ```
 """

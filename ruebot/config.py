@@ -1,8 +1,16 @@
+#python native
 import configparser
 import sys
+from pathlib import Path
+
+
+#Returns project root folder
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
+
 
 #name of inifile
-inifile = 'config.ini'
+inifile = str(get_project_root())+'\config.ini'
 
  
 def checkini(ini):
@@ -11,7 +19,7 @@ def checkini(ini):
     
     return True #True = it works
 
-def databaseconfig(filename='config.ini', section='postgresql'):
+def databaseconfig(filename=inifile, section='postgresql'):
     # create a parser
     parser = configparser.ConfigParser()
     # read config file
