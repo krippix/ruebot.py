@@ -3,7 +3,8 @@ import logging
 import sys
 #part of project
 import ruebot.config
-import ruebot.actions.ruebotActions
+from ruebot.actions import list
+from ruebot.actions import ruebotActions
 from ruebot import msg
 from ruebot import getInfo
 #external
@@ -95,7 +96,7 @@ async def on_message(message):
         try:
             if message_split[0] == "buy" and message_split[1].isdigit() and message_split[2] == "at" and message_split[3].isdigit() and len(message_split) == 4: 
                 logging.debug("BUY x FOR y")
-                await message.channel.send(ruebot.actions.ruebotActions.buyrueb(author_id, message_split[1], message_split[3]))
+                await message.channel.send(ruebotActions.buyrueb(author_id, message_split[1], message_split[3]))
                 return
             elif message_split[0] == "buy" and len(message_split) > 4:
                 await message.channel.send(msg_toomanyparam)
@@ -120,7 +121,7 @@ async def on_message(message):
                     if message_split[1] == "register" and len(message_split) == 2:
                         logging.debug("register")    
                         #Checks if user is registered and returns result as string
-                        await message.channel.send(ruebot.actions.ruebotActions.userregister(author_id, author_displayname))
+                        await message.channel.send(ruebotActions.userregister(author_id, author_displayname))
                         return
                     elif message_split[1] == "register":
                         logging.debug("register - too many parameters")
@@ -138,7 +139,7 @@ async def on_message(message):
                 try:
                     if message_split[1] == "delete" and len(message_split) == 2:
                         logging.debug("USER - DELETE")
-                        await message.channel.send(ruebot.actions.ruebotActions.userdelete(author_id))
+                        await message.channel.send(ruebotActions.userdelete(author_id))
                         return
                 except IndexError:
                     logging.debug("delete - IndexError")
@@ -157,7 +158,7 @@ async def on_message(message):
                                 logging.debug("fruit")
                                 
                                 #Fügt Frucht dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebot.actions.ruebotActions.addinfoFruit(author_id, message_split[3]))
+                                await message.channel.send(ruebotActions.addinfoFruit(author_id, message_split[3]))
                                 return
                             elif message_split[2] == "fruit" and len(message_split) == 3:
                                 #Parameter is missing
@@ -179,7 +180,7 @@ async def on_message(message):
                                 logging.debug("USER ADDINFO FC")
                                 
                                 #Fügt Friendcode dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebot.actions.ruebotActions.addinfoFC(author_id, message_split[3]))
+                                await message.channel.send(ruebotActions.addinfoFC(author_id, message_split[3]))
                                 return
                             elif message_split[2] == "fc" and len(message_split) == 3:
                                 #Parameter is missing
@@ -200,7 +201,7 @@ async def on_message(message):
                                 logging.debug("USER ADDINFO PIRATE")
                                 
                                 #Fügt Friendcode dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebot.actions.ruebotActions.addinfoPirate(author_id, message_split[3]))
+                                await message.channel.send(ruebotActions.addinfoPirate(author_id, message_split[3]))
                                 return
                             elif message_split[2] == "pirate" and len(message_split) == 3:
                                 #Parameter is missing
@@ -229,7 +230,7 @@ async def on_message(message):
                         try:
                             if message_split[2] == "fc" and len(message_split) == 3:
                                 logging.debug("USER - DELETEINFO - FC")
-                                await message.channel.send(ruebot.actions.ruebotActions.deleteinfoFC(author_id))
+                                await message.channel.send(ruebotActions.deleteinfoFC(author_id))
                                 return
                             elif message_split[2] == "fc" and len(message_split) > 3:
                                 #Parameter is missing
@@ -257,7 +258,7 @@ async def on_message(message):
                 #PRICE ADD START
                 try:
                     if message_split[1] == "add" and len(message_split) == 3:
-                        await message.channel.send(ruebot.actions.ruebotActions.priceAdd(message_split[2], author_id))                      
+                        await message.channel.send(ruebotActions.priceAdd(message_split[2], author_id))                      
                         return
                 
                     elif message_split[1] == "add" and len(message_split) == 2:
@@ -288,10 +289,10 @@ async def on_message(message):
                 
                 #LIST PRICE START
                 try:
-                    if message_split[1] == "price" and len(message_split) == 2:
+                    if message_split[1] == "prices" and len(message_split) == 2:
         
-                        await message.channel.send(ruebot.actions.ruebotActions.listPrice(author_id))
-                        logging.debug("LIST - PRICE")
+                        await message.channel.send(list.prices(author_id))
+                        logging.debug("LIST - PRICES")
                         return
                         
                     elif message_split[1] == "price" and len(message_split) > 2:
@@ -305,7 +306,7 @@ async def on_message(message):
                 #LIST USERS START
                 try:
                     if message_split[1] == "users" and len(message_split) == 2:
-                        await message.author.send(ruebot.actions.ruebotActions.listUsers(None))
+                        await message.author.send(list.users(None))
                         await message.channel.send("Liste als direktnachricht gesendet!")
                         return
 
@@ -321,11 +322,11 @@ async def on_message(message):
                 try:
                     #LIST USER without username parameter
                     if message_split[1] == "user" and len(message_split) == 2:
-                        await message.channel.send(ruebot.actions.ruebotActions.listUsers(author_displayname))
+                        await message.channel.send(list.users(author_displayname))
                         return
                     #LIST USER <USERNAME>
                     elif message_split[1] == "user" and len(message_split) >= 3:
-                        await message.channel.send(ruebot.actions.ruebotActions.listUsers(message_split[2:]))
+                        await message.channel.send(list.users(message_split[2:]))
                         return
                 except IndexError:
                     pass
