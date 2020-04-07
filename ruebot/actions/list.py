@@ -1,11 +1,14 @@
 #python native
 import logging
 import time
+from datetime import timedelta
 #part of project
 from ruebot.actions import ruebDB
 from ruebot import msg
+from ruebot import getInfo
 #external
 from texttable import Texttable
+from ruebot.actions.ruebDB import ruebDatabaseError
 
 
 
@@ -123,10 +126,37 @@ def users(user_input):
 
 
 #LIST PRICEHISTORY <USER>
-def pricehistory():
+def pricehistory(author_id, user_input):
     #Lists pricehistory since last monday
-    print()
     
+    #Get last sunday of this week
+    try:
+        last_sunday = getInfo.lastSunday()
+    except Exception as e:
+        return e
+    
+    
+    #TODO: Fehlende Tage/Tageszeiten erkennen
+    #If no userinput get pricehistory of user typing
+    if user_input is None:
+        print("test")
+        try:
+            answer_tuple = ruebDB.dbfetchall("SELECT price, date, daytime FROM turnip_prices WHERE users_id_fkey=%s AND date > %s ORDER BY date ASC, daytime ASC", (author_id, last_sunday))
+        except ruebDatabaseError:
+            return msg.DbError()
+        except Exception as e:
+            logging.error(e)
+            
+        if answer_tuple is None:
+            return "Keine Ergebnisse"
+        
+        
+        print("ALLES KLAR AMK")
+        for x in answer_tuple:
+            print("PRICE HISTORY TEST: ")
+            print(x)
+
+    return answer_tuple
     
     
     

@@ -301,6 +301,29 @@ async def on_message(message):
                     pass
                 #LIST PRICE END
                 
+                #LIST PRICEHISTORY START
+                try:
+                    #LIST PRICEHISTORY (no parameters)
+                    if message_split[1] == "pricehistory" and len(message_split) == 2:
+                        logging.debug("LIST PRICEHISTORY")
+                        user_input = None
+                        
+                        #get pricehistory
+                        await message.channel.send(list.pricehistory(author_id, user_input))
+                        return
+                    
+                    #LIST PRICEHISTORY <USERNAME>
+                    if message_split[1] == "pricehistory" and len(message_split) > 2:
+                        logging.debug("LIST PRICEHISTORY <USERNAME>")
+                        return
+            
+                except:
+                    pass
+                #LIST PRICEHISTORY END
+                
+                
+                
+                
                 #LIST USERS START
                 try:
                     if message_split[1] == "users" and len(message_split) == 2:

@@ -14,12 +14,11 @@ def dbrequest(sqlstatement, user_input):
     
     conn = None
     try:
-        
         # read connection parameters
         params = config.databaseconfig()
         
         # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
+        logging.info('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
         
         # create a cursor
@@ -27,19 +26,13 @@ def dbrequest(sqlstatement, user_input):
         
         # execute a statement
         cur.execute(sqlstatement, (user_input))
-
- 
-        # display the PostgreSQL database server version
-        #print('PostgreSQL database version:')
-        #cur.execute('SELECT version()')
+        
+        #get one of the dbresults
         answer = cur.fetchone()
        
         # close the communication with the PostgreSQL
         cur.close()
         
-        #print("-----ANSWER_START-----")
-        #print(answer)
-        #print("------ANSWER_END------")
         return answer
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(error)
@@ -60,7 +53,7 @@ def dbfetchall(sqlstatement, user_input):
         params = config.databaseconfig()
         
         # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
+        logging.info('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
         
         # create a cursor
@@ -109,14 +102,14 @@ def dbcommit(sqlstatement, user_input):
         
         # execute a statement
         cur.execute(sqlstatement, (user_input))
+        
+        #Commit statement
         answer = conn.commit()
         
        
         # close the communication with the PostgreSQL
         cur.close()
-        print("-----ANSWER_START-----")
-        print(answer)
-        print("------ANSWER_END------")
+
         return answer
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(error)
