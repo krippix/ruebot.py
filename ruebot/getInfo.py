@@ -2,8 +2,8 @@
 import logging
 from datetime import datetime, timedelta
 #part of project
-import ruebDB
-import msg
+from ruebot.actions import ruebDB
+from ruebot import msg
 
 
 

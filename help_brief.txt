@@ -8,6 +8,7 @@ help
 help full
 
 list price
+list history
 list users
 list user <username>
                       

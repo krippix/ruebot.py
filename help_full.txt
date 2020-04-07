@@ -5,6 +5,7 @@ $RÜBot v.1.0.0
 	help full                           Sendet gesamte hilfe als DM
 
 	list price                          Listet alle aktuellen Rübenpreise auf
+	list history                        Listet die letzten Rübenpreise der aktuellen Woche auf.
 	list users                          Listet alle Benutzer auf.
 	list user <username>                Listet info eines Benutzers auf. Freilassen für self.
                       
