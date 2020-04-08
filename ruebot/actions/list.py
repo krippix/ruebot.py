@@ -1,7 +1,7 @@
 #python native
 import logging
 import time
-from datetime import timedelta
+import datetime
 #part of project
 from ruebot.actions import ruebDB
 from ruebot import msg
@@ -9,6 +9,7 @@ from ruebot import getInfo
 #external
 from texttable import Texttable
 from ruebot.actions.ruebDB import ruebDatabaseError
+
 
 
 
@@ -129,6 +130,8 @@ def users(user_input):
 def pricehistory(author_id, user_input):
     #Lists pricehistory since last monday
     
+    author_id=95480104779526144
+    
     #Get last sunday of this week
     try:
         last_sunday = getInfo.lastSunday()
@@ -139,31 +142,124 @@ def pricehistory(author_id, user_input):
     #TODO: Fehlende Tage/Tageszeiten erkennen
     #If no userinput get pricehistory of user typing
     if user_input is None:
-        print("test")
+
         try:
             answer_tuple = ruebDB.dbfetchall("SELECT price, date, daytime FROM turnip_prices WHERE users_id_fkey=%s AND date > %s ORDER BY date ASC, daytime ASC", (author_id, last_sunday))
         except ruebDatabaseError:
             return msg.DbError()
         except Exception as e:
             logging.error(e)
+        
             
         if answer_tuple is None:
             return "Keine Ergebnisse"
         
+        #====================================================================
+        i = 0 #Variable for tuple selection
+        k = 0 #Variable for list selection
+        #Start with False (AM)
+        needet_daytime = False
+        answer_list = [[],[]*6] 
+        #start from last monday
+        current_date = last_sunday + datetime.timedelta(days=1) #start at monday
+        print("current_date")
         
+        #ANSWER_TUPLE: (price,date,daytime)
+        
+        #TODO: TEST APPEND
+        try:
+            while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
+                
+                
+                #Is it the expected date?
+                if current_date == answer_tuple[i][1]:
+                    
+                    #Is it the expected daytime?
+                    if needet_daytime == answer_tuple[i][2]:
+                        answer_list[k] = [answer_tuple[i][0], answer_tuple[i][1], answer_tuple[i][2]]
+                        
+                        #Daytime True or false
+                        if answer_tuple[i][2] == True:
+                            needet_daytime = False
+                            
+                            #Next day
+                            current_date += datetime.timedelta(days=1)
+                       
+                        else:
+                            needet_daytime = True
+        
+                        i += 1
+                        k += 1
+                    
+                    #Unexpected daytime
+                    else:       
+                        answer_list[k] = ['x', datetime.date.today(), needet_daytime]
+                        
+                        #change needet daytime to opposite again
+                        if needet_daytime == True:
+                            needet_daytime = False
+                            
+                            #Next day
+                            current_date += datetime.timedelta(days=1)
+                        
+                        #Daytime was false, change to next daytime
+                        else:
+                            needet_daytime = True
+                        
+                        k += 1
+        
+                    #END DAYTIME?
+                #Date is wrong
+                else:
+                    #Place x for wrong date
+                    answer_list[k] = ['x', datetime.date.today(), needet_daytime]
+                    
+                    #Wird nach AM gesucht
+                    if needet_daytime == True:
+                        
+                        needet_daytime = False
+                        #Next day
+                        current_date += datetime.timedelta(days=1)
+                    
+                    else:
+                        needet_daytime = False
+                    
+                    k += 1
+        
+        
+                #END DATE?
+        
+        
+        except Exception as e:
+            print(e)
+        print("yeet3")
+        print(answer_list)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        #====================================================================
         print("ALLES KLAR AMK")
+        #price, date, daytime
         for x in answer_tuple:
             print("PRICE HISTORY TEST: ")
+            
             print(x)
+            print(x[0])
+            print(x[1])            
 
     return answer_tuple
     
-    
-    
-    
-    
-    
-    
-    
+
     
 #LIST PRICEHISTORY <USER END

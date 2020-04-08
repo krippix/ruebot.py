@@ -1,6 +1,7 @@
 #python native
 import logging
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
+import datetime
 import time
 #part of project
 from ruebot.actions import ruebDB
@@ -51,25 +52,11 @@ def getToday():
 
 def lastSunday():
     #FORMAT: '2020-01-01'
-    current_day = time.strftime('%Y-%m-%d')
     
-    dt = datetime.strptime(current_day, '%Y-%m-%d')
-    datum_sonntag = dt - timedelta(days=dt.isoweekday())
-    end = datum_sonntag + timedelta(days=6)
-    datum_sonntag = (str(datum_sonntag)[0:10])
+    dt = datetime.date.today()
+    datum_sonntag = dt - datetime.timedelta(days=dt.isoweekday())
+    end = datum_sonntag + datetime.timedelta(days=6)
     print(str(end)[0:10]) #Montag
     
     return datum_sonntag
 
-def lastMonday():
-    #FORMAT: '2020-01-01'
-    
-    current_day = time.strftime('%Y-%m-%d')
-    
-    dt = datetime.strptime(current_day, '%Y-%m-%d')
-    datum_sonntag = dt - timedelta(days=dt.isoweekday())
-    end = datum_sonntag + timedelta(days=6)
-    datum_sonntag = (str(datum_sonntag)[0:10])
-    print(str(end)[0:10]) #Montag
-    
-    return datum_sonntag
