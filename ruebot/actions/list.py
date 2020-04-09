@@ -72,7 +72,7 @@ def prices(author_id):
     
     answer = t.draw()
     
-    print(answer)
+
     
     return tablename+"\n```\n"+answer+"```"
 #END LIST PRICE
@@ -96,10 +96,15 @@ def users(user_input):
     #Username is defined
     else:
 
-        user_input = user_input.lower()
+        try:
+            final_user_input = ""
+            for x in user_input:
+                final_user_input = final_user_input + x.lower()
+        except Exception as e:
+            return e
         
         try:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[user_input+"%"],)]
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
         except ruebDB.ruebDatabaseError:
             logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
             return msg.DbError()
@@ -132,6 +137,11 @@ def pricehistory(author_id, user_input):
     
     #author_id=95480104779526144 #testing
     
+    if not getInfo.userexists(author_id):
+        logging.info(msg.NotReg())
+        return msg.NotReg()
+    
+    
     #Get last sunday of this week
     try:
         last_sunday = getInfo.lastSunday()
@@ -139,130 +149,175 @@ def pricehistory(author_id, user_input):
         return e
     
     
-    #TODO: Fehlende Tage/Tageszeiten erkennen
     #If no userinput get pricehistory of user typing
     if user_input is None:
+        request_id = author_id
+    
+    
+    
+    
+    #Username was given    
+    else:
+        
+        
+        try:
+            final_input = ""
+            for x in user_input:
+                final_input = final_input + x
+        except Exception as e:
+            return e
+        
+        
+        final_input = final_input.lower()
 
         try:
-            answer_tuple = ruebDB.dbfetchall("SELECT price, date, daytime FROM turnip_prices WHERE users_id_fkey=%s AND date > %s ORDER BY date ASC, daytime ASC", (author_id, last_sunday))
-        except ruebDatabaseError:
+            answer_tuple = ruebDB.dbfetchall("SELECT id_pkey FROM users WHERE LOWER(displayname) LIKE %s",[final_input+"%"],)
+            logging.info("LIST PRICEHISTORY <USERNAME> : "+str(answer_tuple))
+        except ruebDB.ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
             return msg.DbError()
         except Exception as e:
             logging.error(e)
+            return e
+        
+        
+        if len(answer_tuple) == 0:
+            logging.error("Fehler - Keine Benutzer gefunden.")
+            return "Fehler - Benutzer hat diese Woche noch keine Rübenpreise registriert."
+        
+        elif len(answer_tuple) > 1:
+            return "Mehr als ein Benutzer gefunden, versuche den Namen + Nummer"
+        
+       
+        request_id = answer_tuple[0]
+        
+ 
+    try:
+        answer_tuple = ruebDB.dbfetchall("SELECT price, date, daytime FROM turnip_prices WHERE users_id_fkey=%s AND date > %s ORDER BY date ASC, daytime ASC", (request_id, last_sunday))
+    except ruebDatabaseError:
+        return msg.DbError()
+        logging.error(msg.DbError())
+    except Exception as e:
+        logging.error(e)
         
             
-        if answer_tuple is None:
-            return "Keine Ergebnisse"
+    if answer_tuple is None:
+        logging.info("Keine Ergebnisse")
+        return "Keine Ergebnisse"
         
-        #====================================================================
-        i = 0 #Variable for tuple selection
-        #k = 0 #Variable for list selection
-        #Start with False (AM)
-        needet_daytime = False
-        answer_list = [[],[]] 
-        #start from last monday
-        current_date = last_sunday + datetime.timedelta(days=1) #start at monday
-        print("current_date")
         
-        #ANSWER_TUPLE: (price,date,daytime)
         
-        #TODO: TEST APPEND
-        try:
-            while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
+        
+        
+        
+        
+    #====================================================================
+    i = 0 #Variable for tuple selection
+    #k = 0 #Variable for list selection
+    #Start with False (AM)
+    needet_daytime = False
+    answer_list = [[],[]] 
+    #start from last monday
+    current_date = last_sunday + datetime.timedelta(days=1) #start at monday
+    logging.info("current_date: "+str(current_date))
+        
+    #ANSWER_TUPLE: (price,date,daytime)
+  
+    
+    try:
+        while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
                 
                 
-                #Is it the expected date?
-                if current_date == answer_tuple[i][1]:
+            #Is it the expected date?
+            if current_date == answer_tuple[i][1]:
                     
-                    #Is it the expected daytime?
-                    if needet_daytime == answer_tuple[i][2]:
-                        answer_list.append([answer_tuple[i][0], answer_tuple[i][1], answer_tuple[i][2]])
+                #Is it the expected daytime?
+                if needet_daytime == answer_tuple[i][2]:
+                    answer_list.append([answer_tuple[i][0], answer_tuple[i][1], answer_tuple[i][2]])
                         
-                        #Daytime True or false
-                        if answer_tuple[i][2] == True:
-                            needet_daytime = False
-                            
-                            #Next day
-                            current_date += datetime.timedelta(days=1)
-                       
-                        else:
-                            needet_daytime = True
-        
-                        i += 1
-                        #k += 1
-                    
-                    #Unexpected daytime
-                    else:       
-                        answer_list.append(['x', datetime.date.today(), needet_daytime])
-                        
-                        #change needet daytime to opposite again
-                        if needet_daytime == True:
-                            needet_daytime = False
-                            
-                            #Next day
-                            current_date += datetime.timedelta(days=1)
-                        
-                        #Daytime was false, change to next daytime
-                        else:
-                            needet_daytime = True
-                        
-                        #k += 1
-        
-                    #END DAYTIME?
-                #Date is wrong
-                else:
-                    #Place x for wrong date
-                    answer_list.append(['x', datetime.date.today(), needet_daytime])
-                    
-                    #Wird nach AM gesucht
-                    if needet_daytime == True:
-                        
+                    #Daytime True or false
+                    if answer_tuple[i][2] == True:
                         needet_daytime = False
+                            
                         #Next day
                         current_date += datetime.timedelta(days=1)
-                    
+                       
                     else:
-                        needet_daytime = False
-                    
+                        needet_daytime = True
+        
+                    i += 1
                     #k += 1
+                    
+                #Unexpected daytime
+                else:       
+                    answer_list.append(['x', datetime.date.today(), needet_daytime])
+                        
+                    #change needet daytime to opposite again
+                    if needet_daytime == True:
+                        needet_daytime = False
+                            
+                        #Next day
+                        current_date += datetime.timedelta(days=1)
+                        
+                    #Daytime was false, change to next daytime
+                    else:
+                        needet_daytime = True
+                        
+                        
+                #END DAYTIME?
+            #Date is wrong
+            else:
+                #Place x for wrong date
+                answer_list.append(['x', datetime.date.today(), needet_daytime])
+                    
+                #Wird nach AM gesucht
+                if needet_daytime == True:
+                        
+                    needet_daytime = False
+                    #Next day
+                    current_date += datetime.timedelta(days=1)
+                    
+                else:
+                    needet_daytime = False
+                    
+                   
+        
+            #END DATE?
         
         
-                #END DATE?
-        
-        
-        except Exception as e:
-            print(e)
-        print("yeet3")
-        print(answer_list)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        answer = ""
-        
-        
-        
-        #====================================================================
-        print("ALLES KLAR AMK")
-        #price, date, daytime
-        for x in answer_list:
+    except Exception as e:
+        logging.error(e)
+        return e
+
+
+    #Get full username from request_id
+    try:
+        answer_displayname = ruebDB.dbfetchall("SELECT displayname FROM users WHERE id_pkey=%s", [request_id],)
+    except ruebDatabaseError as e:
+        return msg.DbError()
+        logging.error(e)
+    except Exception as e:
+        return e
+        logging.error(e)
             
-            try:
-                answer = answer + str(x[0]) + "-"
-            except IndexError as e:
-                pass
-            except Exception as e:
-                logging.error(e)
-                return "Fehler - Konnte Tabelle nicht auswerten!"         
+    
+    answer = ""+str(answer_displayname[0][0])+" - Rübenpreise seit Montag: \n"
         
-        #remove last "-"
-        answer = answer[:-1]
+        
+        
+    #price, date, daytime
+    for x in answer_list:
+            
+        try:
+            answer = answer + str(x[0]) + "-"
+        except IndexError as e:
+            pass
+        except Exception as e:
+            logging.error(e)
+            return "Fehler - Konnte Tabelle nicht auswerten!"         
+        
+    #remove last "-"
+    answer = answer[:-1]
         
     return answer
     

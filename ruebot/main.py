@@ -287,7 +287,7 @@ async def on_message(message):
                 
                 #LIST PRICE START
                 try:
-                    if message_split[1] == "prices" and len(message_split) == 2:
+                    if message_split[1] == "prices" and len(message_split) == 2 or message_split[1] == "price" and len(message_split) == 2:
         
                         await message.channel.send(list.prices(author_id))
                         logging.debug("LIST - PRICES")
@@ -315,6 +315,8 @@ async def on_message(message):
                     #LIST PRICEHISTORY <USERNAME>
                     if message_split[1] == "pricehistory" and len(message_split) > 2:
                         logging.debug("LIST PRICEHISTORY <USERNAME>")
+                        print(message_split[2:])
+                        await message.channel.send(list.pricehistory(author_id, message_split[2:]))
                         return
             
                 except:

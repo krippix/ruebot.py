@@ -47,7 +47,7 @@ def buyrueb(author_id, quantity, price):
     
     
     #Get current sunday
-    date_sunday = ruebot.getInfo.FirstDayOfWeek(time.strftime("%Y-%m-%d"))
+    #date_sunday = ruebot.getInfo.FirstDayOfWeek(time.strftime("%Y-%m-%d"))
     
     
     

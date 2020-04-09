@@ -16,6 +16,9 @@ v.1.1.0
 - Pricehistory kann jetzt ausgegeben werden.
 - Der Code wurde vollständig neustrukturiert.
 
+v.1.1.1
+- Pricehistory kann jetzt auch für andere Benutzer ausgegeben werden.
+
 
 geplante Features
 

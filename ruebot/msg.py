@@ -15,9 +15,8 @@ $RÜBot v.1.0.0
     help full                           Sendet gesamte hilfe als DM
 
     list price                          Listet alle aktuellen Rübenpreise auf
-    list history                        Listet die letzten Rübenpreise der aktuellen Woche auf.
-    list users                          Listet alle Benutzer auf.
-    list user <username>                Listet info eines Benutzers auf. Freilassen für self.
+    list pricehistory <username>        Listet die letzten Rübenpreise der aktuellen Woche auf. Freilassen für selbst.
+    list user <username>                Listet info eines Benutzers auf. Freilassen für selbst.
                       
     price add <price>                   Schreibt den aktuellen Rübenpreis in die Datenbank (Zeitzone Europe/Berlin)
     
@@ -30,7 +29,7 @@ Sofern kein Benutzername angegeben werden kann gilt das command für den ausfüh
     user delete                         Löscht den Benutzer unwiderruflich aus der Datenbank.
     
     user addinfo fruit <fruit>          Fügt die native Frucht dem Profil hinzu. (pear, cherry, orange, apple, peach)
-    user addinfo pirate <param>         Pirat (arr) Ja/Nein <param>: true oder false 
+    user addinfo pirate <param>         Pirat (arr) <true|false>
     user addinfo fc <friendcode>        Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000
     
     user deleteinfo fc                  Löscht den Freundescode des betreffenden Benutzers
@@ -54,8 +53,7 @@ help
 help full
 
 list price
-list history
-list users
+list pricehistory <username>
 list user <username>
                       
 price add <price>
