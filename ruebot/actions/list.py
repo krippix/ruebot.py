@@ -130,7 +130,7 @@ def users(user_input):
 def pricehistory(author_id, user_input):
     #Lists pricehistory since last monday
     
-    author_id=95480104779526144
+    #author_id=95480104779526144 #testing
     
     #Get last sunday of this week
     try:
@@ -156,10 +156,10 @@ def pricehistory(author_id, user_input):
         
         #====================================================================
         i = 0 #Variable for tuple selection
-        k = 0 #Variable for list selection
+        #k = 0 #Variable for list selection
         #Start with False (AM)
         needet_daytime = False
-        answer_list = [[],[]*6] 
+        answer_list = [[],[]] 
         #start from last monday
         current_date = last_sunday + datetime.timedelta(days=1) #start at monday
         print("current_date")
@@ -176,7 +176,7 @@ def pricehistory(author_id, user_input):
                     
                     #Is it the expected daytime?
                     if needet_daytime == answer_tuple[i][2]:
-                        answer_list[k] = [answer_tuple[i][0], answer_tuple[i][1], answer_tuple[i][2]]
+                        answer_list.append([answer_tuple[i][0], answer_tuple[i][1], answer_tuple[i][2]])
                         
                         #Daytime True or false
                         if answer_tuple[i][2] == True:
@@ -189,11 +189,11 @@ def pricehistory(author_id, user_input):
                             needet_daytime = True
         
                         i += 1
-                        k += 1
+                        #k += 1
                     
                     #Unexpected daytime
                     else:       
-                        answer_list[k] = ['x', datetime.date.today(), needet_daytime]
+                        answer_list.append(['x', datetime.date.today(), needet_daytime])
                         
                         #change needet daytime to opposite again
                         if needet_daytime == True:
@@ -206,13 +206,13 @@ def pricehistory(author_id, user_input):
                         else:
                             needet_daytime = True
                         
-                        k += 1
+                        #k += 1
         
                     #END DAYTIME?
                 #Date is wrong
                 else:
                     #Place x for wrong date
-                    answer_list[k] = ['x', datetime.date.today(), needet_daytime]
+                    answer_list.append(['x', datetime.date.today(), needet_daytime])
                     
                     #Wird nach AM gesucht
                     if needet_daytime == True:
@@ -224,7 +224,7 @@ def pricehistory(author_id, user_input):
                     else:
                         needet_daytime = False
                     
-                    k += 1
+                    #k += 1
         
         
                 #END DATE?
@@ -244,21 +244,27 @@ def pricehistory(author_id, user_input):
         
         
         
-        
+        answer = ""
         
         
         
         #====================================================================
         print("ALLES KLAR AMK")
         #price, date, daytime
-        for x in answer_tuple:
-            print("PRICE HISTORY TEST: ")
+        for x in answer_list:
             
-            print(x)
-            print(x[0])
-            print(x[1])            
-
-    return answer_tuple
+            try:
+                answer = answer + str(x[0]) + "-"
+            except IndexError as e:
+                pass
+            except Exception as e:
+                logging.error(e)
+                return "Fehler - Konnte Tabelle nicht auswerten!"         
+        
+        #remove last "-"
+        answer = answer[:-1]
+        
+    return answer
     
 
     

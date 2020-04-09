@@ -11,7 +11,10 @@ v.1.0.1
 - list user <username> sollte jetzt auch mit Leerzeichen funktionieren.
 - aufrufen von $RÜBot ist nicht mehr case sensitive
 
+v.1.1.0
 
+- Pricehistory kann jetzt ausgegeben werden.
+- Der Code wurde vollständig neustrukturiert.
 
 
 geplante Features
