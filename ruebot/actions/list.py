@@ -223,10 +223,14 @@ def pricehistory(author_id, user_input):
         
     #ANSWER_TUPLE: (price,date,daytime)
   
-    
+    logging.debug("LIST PRICEHISTORY - Length answer_tuple: "+str(len(answer_tuple)))
+    print(answer_tuple)
+    #return
     try:
+        
         while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
-                
+            #logging.debug("test")
+            print(i)    
                 
             #Is it the expected date?
             if current_date == answer_tuple[i][1]:
@@ -250,7 +254,7 @@ def pricehistory(author_id, user_input):
                     
                 #Unexpected daytime
                 else:       
-                    answer_list.append(['x', datetime.date.today(), needet_daytime])
+                    answer_list.append(['x', current_date, needet_daytime])
                         
                     #change needet daytime to opposite again
                     if needet_daytime == True:
@@ -268,7 +272,8 @@ def pricehistory(author_id, user_input):
             #Date is wrong
             else:
                 #Place x for wrong date
-                answer_list.append(['x', datetime.date.today(), needet_daytime])
+                answer_list.append(['x', current_date, needet_daytime])
+                print(answer_list)
                     
                 #Wird nach AM gesucht
                 if needet_daytime == True:
@@ -278,7 +283,7 @@ def pricehistory(author_id, user_input):
                     current_date += datetime.timedelta(days=1)
                     
                 else:
-                    needet_daytime = False
+                    needet_daytime = True
                     
                    
         

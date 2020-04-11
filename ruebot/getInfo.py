@@ -55,8 +55,8 @@ def lastSunday():
     
     dt = datetime.date.today()
     datum_sonntag = dt - datetime.timedelta(days=dt.isoweekday())
-    end = datum_sonntag + datetime.timedelta(days=6)
-    print(str(end)[0:10]) #Montag
+    #end = datum_sonntag + datetime.timedelta(days=6)
+    #print(str(end)[0:10]) #Montag
     
     return datum_sonntag
 
