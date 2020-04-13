@@ -43,11 +43,9 @@ Alle an den Bot gerichteten Nachrichten werden gespeichert (TODO) und nach 3 Tag
 
 def help_brief():
     return """
-```
-$RÜBot v.1.0.1
+>>> **$RÜBot v.1.0.0**
 
-Liste der Commands.
-Für details: '$RÜBot help full'
+*Für details: '$RÜBot help full'*
 
 help
 help full
@@ -68,7 +66,6 @@ user addinfo fruit <fruit>
 user addinfo pirate <true>/<false>
 user addinfo fc <friendcode>
 
-user deleteinfo fc (TODO)
+user deleteinfo fc
 
-```
 """

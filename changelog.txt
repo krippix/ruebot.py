@@ -1,6 +1,6 @@
 $RÜBot 
 
-v.1.0.1
+v.1.0.0
 
 - Friendcodes können jetzt gelöscht werden.
 - das Pirate Attribut kann jetzt hinzugefügt werden.
@@ -10,18 +10,13 @@ v.1.0.1
 - Piraten Liste wird separat von der normalen ausgegeben
 - list user <username> sollte jetzt auch mit Leerzeichen funktionieren.
 - aufrufen von $RÜBot ist nicht mehr case sensitive
-
-v.1.1.0
-
 - Pricehistory kann jetzt ausgegeben werden.
 - Der Code wurde vollständig neustrukturiert.
-
-v.1.1.1
 - Pricehistory kann jetzt auch für andere Benutzer ausgegeben werden.
-
 
 geplante Features
 
+- Support für @<username>
 - Buy und sell funktion.
 - Preisalarm
 - liste der letzten preise (der aktuellen Woche) list history

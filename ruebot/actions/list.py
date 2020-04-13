@@ -79,40 +79,29 @@ def prices(author_id):
 
 
 
-#LIST USERS | LIST USER <USERNAME> START
-def users(user_input):
-    #pass None if all users should be displayed
-    if user_input is None:
-        try:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE NOT (u.id_pkey = 0 )",(),)]
-        except ruebDB.ruebDatabaseError:
-            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
-            return msg.DbError()
-        
+#LIST USER | LIST USER <USERNAME> START
+def user(user_input):
     
-        if len(answer_tuple) == 0:
-            logging.error("Fehler - Keine Benutzer gefunden.")
-            return "Fehler - Keine Benutzer gefunden."
+    #TODO: Eigentliche Abfrage mit User-ID vornehmen und Mention einbauen
+    
     #Username is defined
-    else:
-
-        try:
-            final_user_input = ""
-            for x in user_input:
-                final_user_input = final_user_input + x.lower()
-        except Exception as e:
-            return e
+    try:
+        final_user_input = ""
+        for x in user_input:
+            final_user_input = final_user_input + x.lower()
+    except Exception as e:
+        return e
         
-        try:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
-        except ruebDB.ruebDatabaseError:
-            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
-            return msg.DbError()
+    try:
+        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
+    except ruebDB.ruebDatabaseError:
+        logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
+        return msg.DbError()
         
     
-        if len(answer_tuple) == 0:
-            logging.error("Fehler - Keine Benutzer gefunden.")
-            return "Fehler - Keine Benutzer gefunden."
+    if len(answer_tuple) == 0:
+        logging.error("Fehler - Keine Benutzer gefunden.")
+        return "Fehler - Keine Benutzer gefunden."
     
     
     
@@ -127,7 +116,7 @@ def users(user_input):
     answer = t.draw()
     
     return "```\n"+answer+"```"         
-#LIST USERS | LIST USER <USERNAME> END    
+#LIST USER <USERNAME> END    
 
 
 
@@ -136,8 +125,7 @@ def pricehistory(author_id, user_input):
     #Lists pricehistory since last monday
     
     #author_id=95480104779526144 #testing
-    
-    if not getInfo.userexists(author_id):
+    if not getInfo.userexists(author_id) and user_input is None:
         logging.info(msg.NotReg())
         return msg.NotReg()
     
@@ -149,17 +137,27 @@ def pricehistory(author_id, user_input):
         return e
     
     
+    #Variable to check if request_id has been determined
+    reqknown = False
+    
+    
+    try:
+        #@<username> was given Format: <@!280098940156772352>
+        if user_input[0][0:3] == "<@!" and user_input[0][-1] == ">" and str(user_input[0][3:len(user_input[0])-1]).isdigit():
+            request_id = str(user_input[0][3:len(user_input[0])-1])
+            reqknown = True
+    
+    except Exception as e:
+        pass
+    
+    
     #If no userinput get pricehistory of user typing
-    if user_input is None:
+    if user_input is None and reqknown == False:
         request_id = author_id
-    
-    
-    
-    
-    #Username was given    
-    else:
         
-        
+    
+    #Get Userid from user_input
+    if reqknown == False:
         try:
             final_input = ""
             for x in user_input:
@@ -191,46 +189,48 @@ def pricehistory(author_id, user_input):
        
         request_id = answer_tuple[0]
         
- 
+    
+    #Get Get known prices of user with request_id
     try:
         answer_tuple = ruebDB.dbfetchall("SELECT price, date, daytime FROM turnip_prices WHERE users_id_fkey=%s AND date > %s ORDER BY date ASC, daytime ASC", (request_id, last_sunday))
     except ruebDatabaseError:
         return msg.DbError()
         logging.error(msg.DbError())
     except Exception as e:
-        logging.error(e)
+        return e
         
             
     if answer_tuple is None:
         logging.info("Keine Ergebnisse")
         return "Keine Ergebnisse"
-        
-        
-        
-        
-        
-        
-        
+  
+
     #====================================================================
     i = 0 #Variable for tuple selection
-    #k = 0 #Variable for list selection
+   
     #Start with False (AM)
     needet_daytime = False
     answer_list = [[],[]] 
     #start from last monday
-    current_date = last_sunday + datetime.timedelta(days=1) #start at monday
-    logging.info("current_date: "+str(current_date))
+    try:
+        current_date = last_sunday + datetime.timedelta(days=1) #start at monday
+    except Exception as e:
+        logging.error(e)
+    
+    
+    logging.info("LIST PRICEHISTORY - current_date: "+str(current_date))
         
     #ANSWER_TUPLE: (price,date,daytime)
   
     logging.debug("LIST PRICEHISTORY - Length answer_tuple: "+str(len(answer_tuple)))
-    print(answer_tuple)
+    logging.debug("LIST PRICEHISTORY - Content answer_tuple: "+str(answer_tuple))
     #return
+    
+
     try:
         
         while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
-            #logging.debug("test")
-            print(i)    
+            #logging.debug("test")  
                 
             #Is it the expected date?
             if current_date == answer_tuple[i][1]:
@@ -273,7 +273,6 @@ def pricehistory(author_id, user_input):
             else:
                 #Place x for wrong date
                 answer_list.append(['x', current_date, needet_daytime])
-                print(answer_list)
                     
                 #Wird nach AM gesucht
                 if needet_daytime == True:

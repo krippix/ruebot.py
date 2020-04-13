@@ -323,33 +323,15 @@ async def on_message(message):
                     pass
                 #LIST PRICEHISTORY END
                 
-                
-                
-                
-                #LIST USERS START
-                try:
-                    if message_split[1] == "users" and len(message_split) == 2:
-                        await message.author.send(list.users(None))
-                        await message.channel.send("Liste als direktnachricht gesendet!")
-                        return
-
-                    elif message_split[1] == "users" and len(message_split) > 2:
-                        logging.debug("LIST - USERS: "+msg_toomanyparam)
-                        await message.channel.send(msg_toomanyparam)
-                        return
-                except IndexError:
-                    pass
-                #LIST USERS END
-                
                 #LIST USER <USERNAME> START
                 try:
                     #LIST USER without username parameter
                     if message_split[1] == "user" and len(message_split) == 2:
-                        await message.channel.send(list.users(author_displayname))
+                        await message.channel.send(list.user(author_displayname))
                         return
                     #LIST USER <USERNAME>
                     elif message_split[1] == "user" and len(message_split) >= 3:
-                        await message.channel.send(list.users(message_split[2:]))
+                        await message.channel.send(list.user(message_split[2:]))
                         return
                 except IndexError:
                     pass
