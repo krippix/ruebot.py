@@ -30,6 +30,11 @@ msg_toomanyparam = "Fehler - Zu viele Parameter. "+msg_wherehelp
 msg_unknowncommand = "Fehler - unbekannter Befehl. "+msg_wherehelp
 
 
+
+#TODO: userid über funktion aus @mention extrahieren.
+#TODO: userid kann verschieden Anfangen! <@! <@& <@
+
+
 @client.event
 async def on_ready():
     print('Logged in as {0.user}'.format(client))
@@ -122,13 +127,13 @@ async def on_message(message):
                         await message.channel.send(ruebotActions.userregister(author_id, author_displayname))
                         return
                     elif message_split[1] == "register":
-                        logging.debug("register - too many parameters")
+                        logging.debug("USER REGISTER - too many parameters")
                         #Too many parameters
                         await message.channel.send(msg_toomanyparam)
                         return
                         
                 except IndexError:
-                    logging.debug("user - IndexError")
+                    logging.debug("USER REGISTER - IndexError")
                     pass
                 #USER REGISTER END
                 
@@ -318,8 +323,7 @@ async def on_message(message):
                         #print(message_split[2:])
                         await message.channel.send(list.pricehistory(author_id, message_split[2:]))
                         return
-            
-                except:
+                except IndexError:
                     pass
                 #LIST PRICEHISTORY END
                 
@@ -337,13 +341,12 @@ async def on_message(message):
                     pass
                 #LIST USER <USERNAME> END
                 
-                
         except IndexError:
             pass
         #LIST END
         
         #WENN NICHTS AUFGEFANGEN WURDE
-        await message.channel.send('Fehlende Parameter oder unbekannter Command! "$RÜBot help" oder "RÜBot help full" für eine Liste der Kommandos')
+        await message.channel.send('Ja da passt was nicht hmmm')
         
         
     #Bot aufgerufen, ohne Parameter anzugeben

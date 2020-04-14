@@ -29,7 +29,6 @@ def updateDisplaynames(author_displayname, author_id):
     #"UPDATE turnip_prices SET users_id_fkey=000000000000000000 WHERE users_id_fkey=%s"
 
 
-
 def userexists(author_id):
     
     try:

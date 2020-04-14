@@ -84,38 +84,65 @@ def user(user_input):
     
     #TODO: Eigentliche Abfrage mit User-ID vornehmen und Mention einbauen
     
-    #Username is defined
+    reqknown = False
+    
     try:
-        final_user_input = ""
-        for x in user_input:
-            final_user_input = final_user_input + x.lower()
+        #@<username> was given Format: <@!280098940156772352>
+        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">":
+            final_user_input = ''.join(i for i in user_input[0] if i.isdigit())
+            logging.debug("request_id: "+final_user_input)
+            reqknown = True
+    
     except Exception as e:
-        return e
-        
-    try:
-        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
-    except ruebDB.ruebDatabaseError:
-        logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
-        return msg.DbError()
-        
+        logging.info(e)
+        pass
+    
+
+    #Username is defined
+    if reqknown == False:
+        try:
+            final_user_input = ""
+            for x in user_input:
+                final_user_input = final_user_input + x.lower()
+        except Exception as e:
+            logging.error("LIST USER: "+e)
+            return "Fehler bei der Abfrage."
+        try:
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
+        except ruebDB.ruebDatabaseError:
+            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
+            return msg.DbError()
+    
+        #Check if multiple results
+        if len(answer_tuple) > 1:
+            return "Mehr als ein Benutzer gefunden, bitte verfeinere deine Suche."
+    
+    
+    #Mention    
+    else:
+        try:
+            answer_tuple = ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE u.id_pkey=%s" , [final_user_input],)
+        except ruebDB.ruebDatabaseError as e:
+            logging.error("LIST - USERS: "+str(e))
+            return msg.DbError()
     
     if len(answer_tuple) == 0:
         logging.error("Fehler - Keine Benutzer gefunden.")
         return "Fehler - Keine Benutzer gefunden."
     
-    
+    print(final_user_input)
     
     #prints input into string
-    t = Texttable()
-    t.add_row(["Benutzer","Frucht", "Freundescode", "pirat / banned"])
+    try:
+        answer = ">>> "
+        answer += "**"+str(answer_tuple[0][0])+"**" + "\n"
+        answer += "Frucht: "+str(answer_tuple[0][1]) + "\n"
+        answer += "Freundescode: "+str(answer_tuple[0][2]) + "\n"
+        answer += "Pirat: "+str(answer_tuple[0][3]) + "\n"
+    except Exception as e:
+        logging.error(e)
     
-
-    for x in answer_tuple:
-        t.add_row(x)
-    
-    answer = t.draw()
-    
-    return "```\n"+answer+"```"         
+    return answer         
 #LIST USER <USERNAME> END    
 
 
@@ -123,12 +150,7 @@ def user(user_input):
 #LIST PRICEHISTORY <USER>
 def pricehistory(author_id, user_input):
     #Lists pricehistory since last monday
-    
-    #author_id=95480104779526144 #testing
-    if not getInfo.userexists(author_id) and user_input is None:
-        logging.info(msg.NotReg())
-        return msg.NotReg()
-    
+    #TODO: Add Sunday-Sellprice
     
     #Get last sunday of this week
     try:
@@ -143,18 +165,20 @@ def pricehistory(author_id, user_input):
     
     try:
         #@<username> was given Format: <@!280098940156772352>
-        if user_input[0][0:3] == "<@!" and user_input[0][-1] == ">" and str(user_input[0][3:len(user_input[0])-1]).isdigit():
-            request_id = str(user_input[0][3:len(user_input[0])-1])
+        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">":
+            request_id = ''.join(i for i in user_input[0] if i.isdigit())
+            logging.debug("request_id: "+request_id)
             reqknown = True
     
     except Exception as e:
+        logging.info(e)
         pass
     
     
     #If no userinput get pricehistory of user typing
     if user_input is None and reqknown == False:
         request_id = author_id
-        
+        reqknown = True
     
     #Get Userid from user_input
     if reqknown == False:
@@ -184,11 +208,16 @@ def pricehistory(author_id, user_input):
             return "Fehler - Benutzer hat diese Woche noch keine Rübenpreise registriert."
         
         elif len(answer_tuple) > 1:
-            return "Mehr als ein Benutzer gefunden, versuche den Namen + Nummer"
+            return "Mehr als ein Benutzer gefunden, bitte verfeinere deine Suche."
         
        
         request_id = answer_tuple[0]
         
+    
+    #Check if requestID exists
+    if not getInfo.userexists(request_id):
+        logging.info(msg.NotReg())
+        return "Der angefragte Benutzer existiert nicht."
     
     #Get Get known prices of user with request_id
     try:
@@ -226,9 +255,9 @@ def pricehistory(author_id, user_input):
     logging.debug("LIST PRICEHISTORY - Content answer_tuple: "+str(answer_tuple))
     #return
     
-
-    try:
-        
+    
+    #Combine Answer into a string, left out days will be replaced with x
+    try: 
         while i <= len(answer_tuple) - 1 and datetime.date.today() >= answer_tuple[i][1]:
             #logging.debug("test")  
                 
@@ -283,17 +312,25 @@ def pricehistory(author_id, user_input):
                     
                 else:
                     needet_daytime = True
-                    
-                   
-        
             #END DATE?
-        
-        
     except Exception as e:
         logging.error(e)
         return e
+    #End Stringbuilder
 
-
+    
+    #Get Saleprice of Sunday
+    try:
+        price_sunday = ruebDB.dbrequest("SELECT price FROM turnip_prices WHERE users_id_fkey=%s AND date=%s", (request_id, last_sunday))
+    except ruebDatabaseError as e:
+        return msg.DbError()
+        logging.error(e)
+    except Exception as e:
+        return e
+    #End get Saleprice
+    
+    
+    
     #Get full username from request_id
     try:
         answer_displayname = ruebDB.dbfetchall("SELECT displayname FROM users WHERE id_pkey=%s", [request_id],)
@@ -305,10 +342,15 @@ def pricehistory(author_id, user_input):
         logging.error(e)
             
     
-    answer = ""+str(answer_displayname[0][0])+" - Rübenpreise seit Montag: \n"
+    #Build Answer string
+    answer = ">>> **"+str(answer_displayname[0][0])+"** - Rübenpreise\n" 
+    
+    #If sunday price was given:
+    if price_sunday is not None:
+        answer += "Sonntag: "+ str(price_sunday[0])+"\n" 
         
-        
-        
+    answer += "Seit Montag: "
+    
     #price, date, daytime
     for x in answer_list:
             
@@ -323,8 +365,5 @@ def pricehistory(author_id, user_input):
     #remove last "-"
     answer = answer[:-1]
         
-    return answer
-    
-
-    
-#LIST PRICEHISTORY <USER END
+    return answer 
+#LIST PRICEHISTORY <USER> END

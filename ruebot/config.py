@@ -18,6 +18,8 @@ def checkini(ini):
     config.read(ini)
     
     return True #True = it works
+#END checkini()
+
 
 def databaseconfig(filename=inifile, section='postgresql'):
     # create a parser
@@ -35,6 +37,7 @@ def databaseconfig(filename=inifile, section='postgresql'):
         raise Exception('Section {0} not found in the {1} file'.format(section, filename))
     return db
 #END DATABASECONFIG
+
 
 def gettoken():
     #Retrieve token from ini

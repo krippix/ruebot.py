@@ -30,7 +30,7 @@ def userregister(author_id, author_displayname):
 #END USER REGISTER
 
 
-
+"""
 def buyrueb(author_id, quantity, price):
     
     if not ruebot.getInfo.userexists(author_id):
@@ -86,7 +86,7 @@ def buyrueb(author_id, quantity, price):
     
     return "Das könnte ein price add sein amk"
 #END BUYRUEB
-
+"""
 
 
 def userdelete(author_id):
