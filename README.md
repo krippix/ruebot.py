@@ -1,6 +1,9 @@
 # ruebot
 $RÜBot
 
+Discord Bot for tracking Turnip Prices in Animal Crossing.
+
+
 Rename default-config.ini to config.ini for it to work
 
 $RÜBot v.1.0.0
