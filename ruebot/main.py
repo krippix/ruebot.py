@@ -4,7 +4,10 @@ import sys
 #part of project
 import ruebot.config
 from ruebot.actions import list
-from ruebot.actions import ruebotActions
+from ruebot.actions import addinfo
+from ruebot.actions import deleteinfo
+from ruebot.actions import user
+from ruebot.actions import price
 from ruebot import msg
 from ruebot import getInfo
 #external
@@ -25,8 +28,7 @@ client = discord.Client()
 #Text if user is not registered
 notreg_txt = "Benutzer ist nicht registriert. Schreibe '$RÜBot user register' um dich zu registrieren."
 msg_wherehelp = "'$RÜBot help' für eine Liste der Befehle"
-msg_missingparam = "Fehler - Fehlender Parameter. "+msg_wherehelp
-msg_toomanyparam = "Fehler - Zu viele Parameter. "+msg_wherehelp
+
 msg_unknowncommand = "Fehler - unbekannter Befehl. "+msg_wherehelp
 
 
@@ -51,24 +53,24 @@ async def on_message(message):
     author_displayname = str(message.author) 
     
     
-    #check for $RÜBot
+    #check for if bot is actually called $RÜBot
     if message.content.lower().startswith(callbot + ' '):
         
-        #Benutzernamen aktualisieren bzw prüfen ob er sich geändert hat
+        #Check if username was changed since last message
         if getInfo.userexists(author_id):
-            logging.info("CHECKING IF USERNAME NEEDS UPDATE")
+            logging.info("Checking if username was changed.")
             logging.info(getInfo.updateDisplaynames(author_displayname, author_id))
             
         
-        #Removes callbot1 or callbot2 from msg
+        #Removes callbot from message
         message_tmp = message.content
-        message_tmp = message_tmp[7:]
-        logging.info(author_displayname + " schreibt: " + message_tmp)
-        print(author_displayname + " schreibt: " + message_tmp)
+        message_tmp = message_tmp[len(callbot)+1:]
+        logging.info(author_displayname + " wrote: " + message_tmp)
         
         #Split message into array seperated by spaces
         message_split = message_tmp.split(" ")
-        print(message_split)
+        logging.debug("Message as list: "+str(message_split))
+        
         
         #HELP  START
         try:
@@ -84,9 +86,7 @@ async def on_message(message):
                 await message.channel.send(msg.help_brief())
                 return
         except IndexError:
-            await message.channel.send(msg_missingparam)
-            return
-
+            pass
         #Help END
         
         
@@ -94,7 +94,7 @@ async def on_message(message):
         #TODO: SELL, Profittracker. Rüben verfallen nach einer woche.
         
         
-        
+        """
         #TODO: BUY START
         try:
             if message_split[0] == "buy" and message_split[1].isdigit() and message_split[2] == "at" and message_split[3].isdigit() and len(message_split) == 4: 
@@ -111,25 +111,26 @@ async def on_message(message):
             pass
         
         #BUY END
-        
+        """
         
         
         #USER START
-       
         try:
             if message_split[0] == "user":
                 logging.debug("user")
                 #USER REGISTER START
                 try: 
                     if message_split[1] == "register" and len(message_split) == 2:
-                        logging.debug("register")    
+                        logging.debug("USER REGISTER")    
                         #Checks if user is registered and returns result as string
-                        await message.channel.send(ruebotActions.userregister(author_id, author_displayname))
+                        await message.channel.send(user.register(author_id, author_displayname))
+                        logging.debug("USER REGISTER - FINISHED")
                         return
                     elif message_split[1] == "register":
                         logging.debug("USER REGISTER - too many parameters")
                         #Too many parameters
-                        await message.channel.send(msg_toomanyparam)
+                        await message.channel.send(msg.tooManyParam(callbot+" user register"))
+                        logging.debug("USER REGISTER - FINISHED")
                         return
                         
                 except IndexError:
@@ -141,11 +142,12 @@ async def on_message(message):
                 #USER DELETE START
                 try:
                     if message_split[1] == "delete" and len(message_split) == 2:
-                        logging.debug("USER - DELETE")
-                        await message.channel.send(ruebotActions.userdelete(author_id))
+                        logging.debug("USER DELETE")
+                        await message.channel.send(user.delete(author_id))
+                        logging.debug("USER DELETE FINISHED")
                         return
                 except IndexError:
-                    logging.debug("delete - IndexError")
+                    logging.debug("USER DELETE - IndexError")
                     pass
                 #USER DELETE END
                 
@@ -153,24 +155,28 @@ async def on_message(message):
                 #USER ADDINFO START
                 try:
                     if message_split[1] == "addinfo":
-                        logging.debug("addinfo")
+                        logging.debug("USER ADDINFO")
                         
                         #USER ADDINFO FRUIT START
                         try:
                             if message_split[2] == "fruit" and len(message_split) == 4:
-                                logging.debug("fruit")
+                                logging.debug("USER ADDINFO FRUIT")
                                 
-                                #Fügt Frucht dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebotActions.addinfoFruit(author_id, message_split[3]))
+                                #adds fruit to users 
+                                await message.channel.send(addinfo.fruit(author_id, message_split[3]))
+                                logging.debug("USER ADDINFO FRUIT - FINISHED")
                                 return
                             elif message_split[2] == "fruit" and len(message_split) == 3:
                                 #Parameter is missing
-                                await message.channel.send(msg_missingparam)
+                                logging.debug("USER ADDINFO FRUIT - missing parameters")
+                                await message.channel.send(msg.missingParam(callbot+" user addinfo fruit <fruit>"))
+                                logging.debug("USER ADDINFO FRUIT - FINISHED")
                                 return
                             
                             elif message_split[2] == "fruit" and len(message_split) > 4:
-                                logging.info(msg_toomanyparam)
-                                await message.channel.send(msg_toomanyparam)
+                                logging.info("USER ADDINFO FRUIT - too many parameters")
+                                await message.channel.send(msg.tooManyParam(callbot+" user addinfo fruit <fruit>"))
+                                logging.debug("USER ADDINFO FRUIT - FINISHED")
                                 return
                             
                         except IndexError:
@@ -183,16 +189,20 @@ async def on_message(message):
                                 logging.debug("USER ADDINFO FC")
                                 
                                 #Fügt Friendcode dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebotActions.addinfoFC(author_id, message_split[3]))
+                                await message.channel.send(addinfo.friendcode(author_id, message_split[3]))
+                                logging.debug("USER ADDINFO FC - FINISHED")
                                 return
                             elif message_split[2] == "fc" and len(message_split) == 3:
                                 #Parameter is missing
-                                await message.channel.send(msg_missingparam)
+                                logging.info("USER ADDINFO FC - missing parameters")
+                                await message.channel.send(msg.missingParam(callbot+" user addinfo <friendcode>"))
+                                logging.debug("USER ADDINFO FC - FINISHED")
                                 return
                             
                             elif message_split[2] == "fc" and len(message_split) > 4:
-                                logging.info(msg_toomanyparam)
-                                await message.channel.send(msg_toomanyparam)
+                                logging.info("USER ADDINFO FC - too many parameters")
+                                await message.channel.send(msg.tooManyParam(callbot+" user addinfo fc <friendcode>"))
+                                logging.debug("USER ADDINFO FC - FINISHED")
                                 return
                         except IndexError:
                             pass   
@@ -202,74 +212,83 @@ async def on_message(message):
                         try:
                             if message_split[2] == "pirate" and len(message_split) == 4:
                                 logging.debug("USER ADDINFO PIRATE")
-                                
                                 #Fügt Friendcode dem Benutzereintrag in der db hinzu
-                                await message.channel.send(ruebotActions.addinfoPirate(author_id, message_split[3]))
+                                await message.channel.send(addinfo.pirate(author_id, message_split[3]))
+                                logging.debug("USER ADDINFO PIRATE - FINISHED")
                                 return
                             elif message_split[2] == "pirate" and len(message_split) == 3:
                                 #Parameter is missing
-                                await message.channel.send(msg_missingparam)
+                                await message.channel.send(msg.missingParam(callbot+" addinfo pirate <true|false>"))
+                                logging.debug("USER ADDINFO PIRATE - FINISHED")
                                 return
                             
                             elif message_split[2] == "pirate" and len(message_split) > 4:
-                                logging.info(msg_toomanyparam)
-                                await message.channel.send(msg_toomanyparam)
+                                logging.info("USER ADDINFO PIRATE - too many parameters")
+                                await message.channel.send(msg.tooManyParam(callbot+" addinfo pirate <true|false>"))
+                                logging.debug("USER ADDINFO PIRATE - FINISHED")
                                 return
                         except IndexError:
                             pass   
-                        
                         #USER ADDINFO PIRATE END
                 except IndexError:
-                    logging.debug("addinfo - IndexError")
+                    logging.debug("USER ADDINFO - IndexError")
                     pass
                 #USER ADDINFO END
+                
                 
                 #USER DELETEINFO START
                 try:
                     if message_split[1] == "deleteinfo":
-                        logging.debug("USER - DELETEINFO")
+                        logging.debug("USER DELETEINFO")
                         
                         #USER DELETEINFO FC START
                         try:
                             if message_split[2] == "fc" and len(message_split) == 3:
-                                logging.debug("USER - DELETEINFO - FC")
-                                await message.channel.send(ruebotActions.deleteinfoFC(author_id))
+                                logging.debug("USER DELETEINFO FC")
+                                await message.channel.send(deleteinfo.friendcode(author_id))
+                                logging.debug("USER DELETEINFO FC - FINISHED")
                                 return
                             elif message_split[2] == "fc" and len(message_split) > 3:
-                                #Parameter is missing
-                                logging.info(msg_toomanyparam)
-                                await message.channel.send(msg_toomanyparam)
+                                #Too many parameters
+                                logging.info("USER DELETEINFO FC - too many parameters")
+                                await message.channel.send(msg.tooManyParam(callbot+" USER DELETEINFO FC"))
+                                logging.debug("USER DELETEINFO FC - FINISHED")
                                 return      
                         except IndexError:
                             pass
-                        #USER DELETEINFO FRUIT END
+                        #USER DELETEINFO FC END
                 except IndexError:
                     logging.debug("USER DELETEINFO - IndexError")
                     pass
                 #USER DELETEINFO END
                 
-        except IndexError:
-            logging.info(msg_missingparam)
-            await message.channel.send(msg_missingparam)
-            return
+        except IndexError as e:
+            logging.info("USER - IndexError: "+e)
+            pass
         #USER END
         
         
         #PRICE START
         try:
             if message_split[0] == "price" and len(message_split) != 1:
+                logging.debug("PRICE")
                 #PRICE ADD START
                 try:
                     if message_split[1] == "add" and len(message_split) == 3:
-                        await message.channel.send(ruebotActions.priceAdd(message_split[2], author_id))                      
+                        logging.debug("PRICE ADD")
+                        await message.channel.send(price.add(message_split[2], author_id))  
+                        logging.debug("PRICE ADD - FINISHED")                    
                         return
                 
                     elif message_split[1] == "add" and len(message_split) == 2:
-                        logging.info("Fehler - fehlender Parameter <price>")
-                        await message.channel.send("Fehler - fehlender Parameter <price>")
+                        logging.info("PRICE ADD - Missing Parameter")
+                        await message.channel.send(msg.missingParam(callbot+" price add <price>"))
+                        logging.debug("PRICE ADD - FINISHED")   
                         return
-                    else:
-                        await message.channel.send(msg_unknowncommand)
+                    elif message_split[1] == "add":
+                        await message.channel.send(msg.tooManyParam(callbot+" price add <price>"))
+                        logging.debug("PRICE ADD - FINISHED")
+                        return
                 except IndexError:
                     pass
                 #PRICE ADD END
@@ -277,7 +296,8 @@ async def on_message(message):
                 
             #Missing parameters
             elif message_split[0] == "price":
-                await message.channel.send(msg_missingparam)
+                await message.channel.send(msg.missingParam(callbot+" price <param>"))
+                logging.debug("PRICE - FINISHED")
                 return
         
         except IndexError:
@@ -293,14 +313,16 @@ async def on_message(message):
                 #LIST PRICE START
                 try:
                     if message_split[1] == "prices" and len(message_split) == 2 or message_split[1] == "price" and len(message_split) == 2:
+                        logging.debug("LIST PRICES")
         
                         await message.channel.send(list.prices(author_id))
-                        logging.debug("LIST - PRICES")
+                        logging.debug("LIST PRICES - FINISHED")
                         return
                         
                     elif message_split[1] == "price" and len(message_split) > 2:
-                        logging.debug("LIST - PRICE: "+msg_toomanyparam)
-                        await message.channel.send(msg_toomanyparam)
+                        logging.debug("LIST PRICES - too many parameters")
+                        await message.channel.send(msg.tooManyParam(callbot+" list prices"))
+                        logging.debug("LIST PRICES - FINISHED")
                         return
                 except IndexError:
                     pass
@@ -315,6 +337,7 @@ async def on_message(message):
                         
                         #get pricehistory
                         await message.channel.send(list.pricehistory(author_id, user_input))
+                        logging.debug("LIST PRICEHISTORY - FINISHED")
                         return
                     
                     #LIST PRICEHISTORY <USERNAME>
@@ -322,6 +345,7 @@ async def on_message(message):
                         logging.debug("LIST PRICEHISTORY <USERNAME>")
                         #print(message_split[2:])
                         await message.channel.send(list.pricehistory(author_id, message_split[2:]))
+                        logging.debug("LIST PRICEHISTORY <USERNAME> - FINISHED")
                         return
                 except IndexError:
                     pass
@@ -331,11 +355,15 @@ async def on_message(message):
                 try:
                     #LIST USER without username parameter
                     if message_split[1] == "user" and len(message_split) == 2:
+                        logging.debug("LIST USER")
                         await message.channel.send(list.user(author_displayname))
+                        logging.debug("LIST USER - FINISHED")
                         return
                     #LIST USER <USERNAME>
                     elif message_split[1] == "user" and len(message_split) >= 3:
+                        logging.debug("LIST USER <USERNAME>")
                         await message.channel.send(list.user(message_split[2:]))
+                        logging.debug("LIST USER <USERNAME> - FINISHED")
                         return
                 except IndexError:
                     pass
@@ -346,15 +374,15 @@ async def on_message(message):
         #LIST END
         
         #WENN NICHTS AUFGEFANGEN WURDE
-        await message.channel.send('Ja da passt was nicht hmmm')
+        await message.channel.send('Ja da passt was mit dem Syntax nicht hmmm...')
         
         
     #Bot aufgerufen, ohne Parameter anzugeben
     elif message.content.lower() == callbot:
-        await message.channel.send('Fehlende Parameter! "$RÜBot help" oder "RÜBot help full" für eine Liste der Kommandos')
+        logging.info("No Parameters after "+callbot)
+        await message.channel.send("Ohne Parameter passiert hier nichts! '$RÜBot help' oder '$RÜBot help full' für eine Liste der Kommandos.")
     #$RÜBot ende   
-        
-        
+           
     
 try:
     client.run(ruebot.config.gettoken())

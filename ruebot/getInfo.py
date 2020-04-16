@@ -4,7 +4,7 @@ import logging
 import datetime
 import time
 #part of project
-from ruebot.actions import ruebDB
+from ruebot import ruebDB
 from ruebot import msg
 
 
@@ -18,13 +18,14 @@ def updateDisplaynames(author_displayname, author_id):
     
     
     if database_displayname[0] == author_displayname:
-        logging.info("Username remains unchanged")
+        logging.info("username remains unchanged")
         return
     else:
         try:
             ruebDB.dbcommit("UPDATE users SET displayname=%s WHERE id_pkey=%s", (author_displayname, author_id))
-        except ruebDB.ruebDatabaseError as msg:
-            logging.warning("UPDATE USERNAME: "+msg)
+            logging.info("username changed from "+str(database_displayname[0])+" to "+str(author_displayname))
+        except ruebDB.ruebDatabaseError as e:
+            logging.warning("Error username update: "+e)
 
     #"UPDATE turnip_prices SET users_id_fkey=000000000000000000 WHERE users_id_fkey=%s"
 
@@ -38,6 +39,7 @@ def userexists(author_id):
     
     #Check if db-entry of user exists
     if dbanswer is None:
+        logging.info("userexists: No")
         return False
     
     return True
@@ -46,6 +48,7 @@ def userexists(author_id):
 
 
 def getToday():
+    logging.debug("getting current day: "+str(time.strftime('%Y-%m-%d')))
     return time.strftime('%Y-%m-%d')
 
 

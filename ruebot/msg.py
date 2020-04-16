@@ -5,7 +5,21 @@ def NotReg():
 def DbError():
     return "Fehler bei der Datenbankverbindung - Versuche es später nochmal."
 
+def tooManyParam(syntax):
+    
+    return "Fehler - Zu viele Parameter. Syntax: '"+syntax+"'"
+#END toomanyparam
 
+
+def missingParam(syntax):
+    return "Fehler - Fehlende Parameter. Syntax: '"+syntax+"'"
+#END missingParam()
+
+
+def noUser():
+    return "Fehler - Kein Benutzer gefunden!"
+
+    
 def help_full():
     return """
 ```

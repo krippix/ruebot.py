@@ -3,12 +3,12 @@ import logging
 import time
 import datetime
 #part of project
-from ruebot.actions import ruebDB
+from ruebot import ruebDB
 from ruebot import msg
 from ruebot import getInfo
 #external
 from texttable import Texttable
-from ruebot.actions.ruebDB import ruebDatabaseError
+from ruebot.ruebDB import ruebDatabaseError
 
 
 
@@ -28,8 +28,8 @@ def prices(author_id):
             daytime = True
                 
     else:
-        logging.error("Couldn't retrieve time!")
-        return "Fehler - Eintrag konnte nicht erstellt werden, bitte versuche es später erneut."           
+        logging.error("LIST PRICES: Couldn't retrieve time!")
+        return "Fehler - Zeit konnte nicht abgerufen werden, bitte versuche es später erneut."           
                 
     #       
     
@@ -37,6 +37,9 @@ def prices(author_id):
         #Retrieve whether user is marked as pirate
         answer_tuple = ruebDB.dbrequest("SELECT pirate FROM users WHERE id_pkey=%s", [author_id],)
         logging.info(answer_tuple)
+        
+        
+        
         
         #Check if pirate is true
         if answer_tuple[0] == 'true':
@@ -49,16 +52,21 @@ def prices(author_id):
                 return "Bisher sind keine :pirate_flag:-Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
         
         
-        #Regular users:
-        else:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND NOT pirate='true' ORDER BY t.price DESC",(daytime,))]
-            tablename = "Nomale Daten: "
-            if len(answer_tuple) == 0:
-                logging.info("Keine Rübenpreise verfügbar")
-                return "Bisher sind keine Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
+        
 
     except ruebDB.ruebDatabaseError:
         return msg.DbError()
+    
+    except TypeError:
+        pass
+        
+    finally:
+        #Regular users:
+        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND NOT pirate='true' ORDER BY t.price DESC",(daytime,))]
+        tablename = "Nomale Daten: "
+        if len(answer_tuple) == 0:
+            logging.info("Keine Rübenpreise verfügbar")
+            return "Bisher sind keine Rübenpreise eingetragen.\nFüge deinen aktuellen Preis mit '$RÜBot price add <preis>' hinzu."
     #except TypeError:
 
     
@@ -105,7 +113,7 @@ def user(user_input):
             for x in user_input:
                 final_user_input = final_user_input + x.lower()
         except Exception as e:
-            logging.error("LIST USER: "+e)
+            logging.error("LIST USER: "+str(e))
             return "Fehler bei der Abfrage."
         try:
             answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
@@ -123,12 +131,12 @@ def user(user_input):
         try:
             answer_tuple = ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE u.id_pkey=%s" , [final_user_input],)
         except ruebDB.ruebDatabaseError as e:
-            logging.error("LIST - USERS: "+str(e))
+            logging.error("LIST USERS: "+str(e))
             return msg.DbError()
     
     if len(answer_tuple) == 0:
-        logging.error("Fehler - Keine Benutzer gefunden.")
-        return "Fehler - Keine Benutzer gefunden."
+        logging.error("LIST USERS - Keine Benutzer gefunden.")
+        return msg.noUser()
     
     print(final_user_input)
     
@@ -205,7 +213,7 @@ def pricehistory(author_id, user_input):
         
         if len(answer_tuple) == 0:
             logging.error("Fehler - Keine Benutzer gefunden.")
-            return "Fehler - Benutzer hat diese Woche noch keine Rübenpreise registriert."
+            return msg.noUser()
         
         elif len(answer_tuple) > 1:
             return "Mehr als ein Benutzer gefunden, bitte verfeinere deine Suche."
