@@ -14,9 +14,7 @@ v.1.0.0
 - Der Code wurde vollständig neustrukturiert.
 - Pricehistory kann jetzt auch für andere Benutzer ausgegeben werden.
 
-geplante Features
+Geplante Features
 
-- Support für @<username>
 - Buy und sell funktion.
 - Preisalarm
-- liste der letzten preise (der aktuellen Woche) list history
