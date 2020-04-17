@@ -8,13 +8,10 @@ Database behind ruebot
 ![Image of Database](https://raw.githubusercontent.com/krippix/ruebot.py/master/database.PNG)
 
 
+The file default-config.ini should be copied to config.ini in order to be regognized.
 
 
-
-
-
-
-Rename default-config.ini to config.ini for it to work
+Help Text (german):
 
 $RÜBot v.1.0.0
 
