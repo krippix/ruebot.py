@@ -1,17 +1,16 @@
-# ruebot
-$RÜBot
+# ruebot.py
 
-Discord Bot for tracking Turnip Prices in Animal Crossing.
+A (at the moment) german Discord bot tracking turnip prices.
 
 
-###Database behind ruebot
+### Database behind ruebot
 ![Image of Database](https://raw.githubusercontent.com/krippix/ruebot.py/master/database.PNG)
 
 
 The file default-config.ini should be copied to config.ini in order to be regognized.
 
 
-###Help Text (german):
+### Help Text (german):
 
 $RÜBot v.1.0.0
 
