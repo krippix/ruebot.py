@@ -4,6 +4,16 @@ $RÜBot
 Discord Bot for tracking Turnip Prices in Animal Crossing.
 
 
+Database behind ruebot
+![Image of Database](https://raw.githubusercontent.com/krippix/ruebot.py/master/database.PNG)
+
+
+
+
+
+
+
+
 Rename default-config.ini to config.ini for it to work
 
 $RÜBot v.1.0.0
@@ -34,3 +44,5 @@ Sofern kein Benutzername angegeben werden kann gilt das command für den ausfüh
 
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
+
+
