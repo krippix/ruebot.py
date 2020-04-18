@@ -1,7 +1,16 @@
-# ruebot
-$RÜBot
+# ruebot.py
 
-Rename default-config.ini to config.ini for it to work
+A (at the moment) german Discord bot tracking turnip prices.
+
+
+### Database behind ruebot
+![Image of Database](https://raw.githubusercontent.com/krippix/ruebot.py/master/database.PNG)
+
+
+The file default-config.ini should be copied to config.ini in order to be regognized.
+
+
+### Help Text (german):
 
 $RÜBot v.1.0.0
 
@@ -31,3 +40,5 @@ Sofern kein Benutzername angegeben werden kann gilt das command für den ausfüh
 
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
+
+
