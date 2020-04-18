@@ -1,6 +1,6 @@
-# ruebot.py
+# $RÜBot Discord Bot
 
-A (at the moment) german Discord bot tracking turnip prices.
+A Discord bot for tracking Animal Crossing turnip prices of multiple users.
 
 
 ### Database behind ruebot
