@@ -3,6 +3,22 @@ import configparser
 import sys
 from pathlib import Path
 
+def bot_version():
+    return "v.1.0.1"
+#END VERSION
+
+
+#TODO: get from ini file
+def bot_name():
+    return "$RÜBot"
+#END BOT_NAME()
+
+
+#TODO import from ini
+def callbot():
+    return "$rübot "
+#END CALLBOT
+
 
 #Returns project root folder
 def get_project_root() -> Path:

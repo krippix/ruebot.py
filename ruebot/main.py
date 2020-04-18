@@ -10,18 +10,17 @@ from ruebot.actions import deleteinfo
 from ruebot.actions import price
 from ruebot import msg
 from ruebot import getInfo
+from ruebot import config
 #external
 from discord.ext import commands
 
 
-#TODO: get botname from ini
-#TODO: set version in config.py
 #bot version
 ruebot_version = "v.1.0.1"
 #Bot displayname
 ruebot_displayname = "$RÜBot"
 #Variable for calling the bot
-callbot = "$rübot "
+callbot = config.callbot()
 
 
 
@@ -90,6 +89,14 @@ async def help_full(message):
     await message.author.send(msg.help_full())
 #END HELP FULL
 #END GROUP: HELP
+
+###################################################################################################
+
+#START ABOUT
+@bot.command(name="about",description="Gibt Infos zum Bot aus")
+async def _about(ctx):
+    await ctx.send(msg.about())
+#END ABOUT
 
 ###################################################################################################
 
