@@ -7,12 +7,12 @@ def DbError():
 
 def tooManyParam(syntax):
     
-    return "Fehler - Zu viele Parameter. Syntax: '"+syntax+"'"
+    return "Zu viele Parameter. Syntax: '"+syntax+"'"
 #END toomanyparam
 
 
 def missingParam(syntax):
-    return "Fehler - Fehlende Parameter. Syntax: '"+syntax+"'"
+    return "Fehlende(r) Parameter. Syntax: '"+syntax+"'"
 #END missingParam()
 
 
@@ -34,19 +34,19 @@ $RÜBot v.1.0.0
                       
     price add <price>                   Schreibt den aktuellen Rübenpreis in die Datenbank (Zeitzone Europe/Berlin)
     
-    buy <quantity> at <price> (TODO)   Notiert den kauf von x Rüben für y Sternis
-    sell <quantity> at <price> (TODO)  Notiert den verkauf von x Rüben für y Sternis
+    buy <quantity> at <price> (TODO)    Notiert den kauf von x Rüben für y Sternis
+    sell <quantity> at <price> (TODO)   Notiert den verkauf von x Rüben für y Sternis
 
 Sofern kein Benutzername angegeben werden kann gilt das command für den ausführenden!
 
     user register                       Registriert den Benutzer in der $RÜBot Datenbank.
-    user delete                         Löscht den Benutzer unwiderruflich aus der Datenbank.
+    user deregister                     Löscht den Benutzer und alle Preise aus der Datenbank
     
     user addinfo fruit <fruit>          Fügt die native Frucht dem Profil hinzu. (pear, cherry, orange, apple, peach)
-    user addinfo pirate <param>         Pirat (arr) <true|false>
-    user addinfo fc <friendcode>        Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000
+    user addinfo pirate <true|false>    Notiert ob der Benutzer pirat/gebannt ist.
+    user addinfo friendcode <code>      Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000
     
-    user deleteinfo fc                  Löscht den Freundescode des betreffenden Benutzers
+    user deleteinfo friendcode          Löscht den Freundescode des betreffenden Benutzers
     
 
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
@@ -74,7 +74,7 @@ buy <quantity> at <price> (TODO)
 sell <quantity> at <price> (TODO)
 
 user register
-user delete                  
+user deregister                  
     
 user addinfo fruit <fruit>          
 user addinfo pirate <true>/<false>

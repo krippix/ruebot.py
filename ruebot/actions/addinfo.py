@@ -43,7 +43,7 @@ def fruit(author_id, user_input):
     
     except KeyError:
         #unknown fruit
-        logging.info("Unknown Fruit: "+fruit_final)
+        logging.info("Unknown Fruit: "+str(user_input))
         return "Unbekannte Frucht; Akzeptierte Früchte: Birne, Kirsche, Orange, Apfel und Pfirsich"  
     except ruebDB.ruebDatabaseError as e:
         logging.error(e)
@@ -137,7 +137,7 @@ def pirate(author_id, user_input):
     elif user_input == "false":
         pirate_final = False
     else:
-        return user_input+" ist kein gültiges argument. Akzeptiert werden: true, false."
+        return "'"+user_input+"' ist kein gültiges argument. Akzeptiert werden: true, false."
     
     #commit pirate status to db
     try:

@@ -1,5 +1,10 @@
 $RÜBot 
 
+v.1.0.1
+
+- Changed the way commands are called (doesent change anything for users)
+- rewrote some commands
+
 v.1.0.0
 
 - Friendcodes können jetzt gelöscht werden.

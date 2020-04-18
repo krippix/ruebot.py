@@ -54,7 +54,7 @@ def gettoken():
     config = configparser.ConfigParser()
     config.read(inifile)
     
-    #check for the part i actually need lel
+    
     #Check if [botconfig] is in ini
     if 'botconfig' not in config:
         print("section '["+section+"]' missing. Delete ini and restart to create new one.")

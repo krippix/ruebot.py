@@ -23,13 +23,14 @@ def delete(author_id):
 
 
 def register(author_id, author_displayname):
+
     
-    #Pr�fen ob Benutzer bereits existiert
+    #check if user already exists
     if getInfo.userexists(author_id):
         logging.info("user already exists.")
         return "Fehler - Benutzer existiert bereits."
     
-    #User wird in datenbank geschrieben             
+    #write new user into database            
     else:
         logging.info("Creating new user: "+str(author_displayname)+ " | "+str(author_id))
         

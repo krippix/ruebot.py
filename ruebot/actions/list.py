@@ -94,19 +94,21 @@ def user(user_input):
     
     reqknown = False
     
+        
+    #user is given as mention
     try:
         #@<username> was given Format: <@!280098940156772352>
-        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">":
-            final_user_input = ''.join(i for i in user_input[0] if i.isdigit())
-            logging.debug("request_id: "+final_user_input)
+        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">" and not reqknown:
+            request_id = ''.join(i for i in user_input[0] if i.isdigit())
+            logging.debug("request_id: "+request_id)
             reqknown = True
     
     except Exception as e:
-        logging.info(e)
+        logging.info("*LIST PRICEHISTORY: "+str(e))
         pass
     
 
-    #Username is defined
+    #GET USER_ID FROM userinput string
     if reqknown == False:
         try:
             final_user_input = ""
@@ -116,29 +118,39 @@ def user(user_input):
             logging.error("LIST USER: "+str(e))
             return "Fehler bei der Abfrage."
         try:
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE LOWER(u.displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT id_pkey FROM users WHERE LOWER(displayname) LIKE %s LIMIT 10",[final_user_input+"%"],)]
         except ruebDB.ruebDatabaseError:
-            logging.error("LIST - USERS: "+ruebDB.ruebDatabaseError)
+            logging.error("LIST - USERS: "+str(ruebDB.ruebDatabaseError))
             return msg.DbError()
-    
+        
+        
+        #check if there was no results
+        if len(answer_tuple) == 0:
+            return "Keine Benutzer gefunden."
+        
         #Check if multiple results
-        if len(answer_tuple) > 1:
+        elif len(answer_tuple) > 1:
             return "Mehr als ein Benutzer gefunden, bitte verfeinere deine Suche."
+        
+        #convert result into string
+        elif len(answer_tuple) == 1:
+            request_id = answer_tuple[0]
+    #END GET USER_ID
     
     
-    #Mention    
-    else:
-        try:
-            answer_tuple = ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE u.id_pkey=%s" , [final_user_input],)
-        except ruebDB.ruebDatabaseError as e:
-            logging.error("LIST USERS: "+str(e))
-            return msg.DbError()
+    #Get user from id    
+    
+    try:
+        answer_tuple = ruebDB.dbfetchall("SELECT u.displayname, f.fruit, u.friendcode, u.pirate FROM users AS u JOIN fruits AS f ON f.id_pkey = u.fruits_id_fkey WHERE u.id_pkey=%s" , [request_id],)
+    except ruebDB.ruebDatabaseError as e:
+        logging.error("LIST USERS: "+str(e))
+        return msg.DbError()
+    
     
     if len(answer_tuple) == 0:
         logging.error("LIST USERS - Keine Benutzer gefunden.")
         return msg.noUser()
     
-    print(final_user_input)
     
     #prints input into string
     try:
@@ -170,23 +182,20 @@ def pricehistory(author_id, user_input):
     #Variable to check if request_id has been determined
     reqknown = False
     
+    if len(user_input) == 0:
+        request_id = author_id
+        reqknown = True
     
     try:
         #@<username> was given Format: <@!280098940156772352>
-        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">":
+        if user_input[0][0:2] == "<@" and user_input[0][-1] == ">" and not reqknown:
             request_id = ''.join(i for i in user_input[0] if i.isdigit())
             logging.debug("request_id: "+request_id)
             reqknown = True
     
     except Exception as e:
-        logging.info(e)
+        logging.info("*LIST PRICEHISTORY: "+str(e))
         pass
-    
-    
-    #If no userinput get pricehistory of user typing
-    if user_input is None and reqknown == False:
-        request_id = author_id
-        reqknown = True
     
     #Get Userid from user_input
     if reqknown == False:

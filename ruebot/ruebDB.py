@@ -18,7 +18,7 @@ def dbrequest(sqlstatement, user_input):
         params = config.databaseconfig()
         
         # connect to the PostgreSQL server
-        logging.debug('Connecting to the PostgreSQL database...')
+        #logging.debug('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
         
         # create a cursor
@@ -40,7 +40,7 @@ def dbrequest(sqlstatement, user_input):
     finally:
         if conn is not None:
             conn.close()
-            logging.debug('dbrequest: Database connection closed.')
+            #logging.debug('dbrequest: Database connection closed.')
  
 def dbfetchall(sqlstatement, user_input):
     """ Connect to the PostgreSQL database server """
@@ -53,7 +53,7 @@ def dbfetchall(sqlstatement, user_input):
         params = config.databaseconfig()
         
         # connect to the PostgreSQL server
-        logging.debug('Connecting to the PostgreSQL database...')
+        #logging.debug('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
         
         # create a cursor
@@ -81,7 +81,7 @@ def dbfetchall(sqlstatement, user_input):
     finally:
         if conn is not None:
             conn.close()
-            logging.debug('dbfetchall: Database connection closed.') 
+            #logging.debug('dbfetchall: Database connection closed.') 
 
 def dbcommit(sqlstatement, user_input):
     """ Connect to the PostgreSQL database server """
@@ -94,7 +94,7 @@ def dbcommit(sqlstatement, user_input):
         params = config.databaseconfig()
         
         # connect to the PostgreSQL server
-        logging.debug('Connecting to the PostgreSQL database...')
+        #logging.debug('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
         
         # create a cursor
@@ -117,5 +117,5 @@ def dbcommit(sqlstatement, user_input):
     finally:
         if conn is not None:
             conn.close()
-            logging.debug('dbcommit: Database connection closed.')
+            #logging.debug('dbcommit: Database connection closed.')
 

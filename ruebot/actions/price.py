@@ -21,7 +21,7 @@ def add(turnip_price, author_id):
     
     #Check if price is viable
     try:
-        turnip_price = int(turnip_price)
+        turnip_price = int(turnip_price[0])
     except Exception:
         logging.info('"'+str(turnip_price)+'" ist kein Gültiger Preis.')
         return '"'+str(turnip_price)+'" ist kein Gültiger Preis.'
