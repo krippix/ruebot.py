@@ -31,7 +31,12 @@ def prices(author_id):
         logging.error("LIST PRICES: Couldn't retrieve time!")
         return "Fehler - Zeit konnte nicht abgerufen werden, bitte versuche es später erneut."           
                 
-    #       
+    
+    #If sunday, display lowest prices first
+    if time.strftime("%w") == str(0):
+        order = "ASC"
+    else:
+        order = "DESC"  
     
     try:
         #Retrieve whether user is marked as pirate
@@ -44,7 +49,7 @@ def prices(author_id):
         #Check if pirate is true
         if answer_tuple[0] == 'true':
             logging.debug("PIRATE = TRUE")
-            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND pirate='true' ORDER BY t.price DESC",(daytime,))]
+            answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND pirate='true' ORDER BY t.price "+order,(daytime,))]
             tablename = ":pirate_flag:Piratendaten:pirate_flag:: "
             
             if len(answer_tuple) == 0:
@@ -62,7 +67,7 @@ def prices(author_id):
         
     finally:
         #Regular users:
-        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND NOT pirate='true' ORDER BY t.price DESC",(daytime,))]
+        answer_tuple = [r for r in ruebDB.dbfetchall("SELECT u.displayname, t.price FROM turnip_prices AS t JOIN users AS u ON t.users_id_fkey = u.id_pkey WHERE t.date=NOW()::date AND daytime=%s AND NOT pirate='true' ORDER BY t.price "+order,(daytime,))]
         tablename = "Nomale Daten: "
         if len(answer_tuple) == 0:
             logging.info("Keine Rübenpreise verfügbar")

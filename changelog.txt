@@ -2,8 +2,10 @@ $RÜBot
 
 v.1.0.1
 
+- turnip prices are now descending on sundays
 - Changed the way commands are called (doesent change anything for users)
 - rewrote some commands
+
 
 v.1.0.0
 
