@@ -5,6 +5,7 @@ v.1.0.1
 - turnip prices are now descending on sundays
 - Changed the way commands are called (doesent change anything for users)
 - rewrote some commands
+- fixed problems when displaying pirate data
 
 
 v.1.0.0
