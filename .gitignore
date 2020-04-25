@@ -1,6 +1,7 @@
 config.ini
 __pycache__/
 .settings/
+.vs/
 test.py
 .project
 .pydevproject
