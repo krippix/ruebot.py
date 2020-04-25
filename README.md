@@ -10,6 +10,8 @@ https://github.com/Rapptz/discord.py
 texttable 
 https://pypi.org/project/texttable/
 
+psycopg2
+https://pypi.org/project/psycopg2/
 
 The file default-config.ini should be copied to config.ini in order to be regognized.
 
