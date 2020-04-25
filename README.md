@@ -15,7 +15,7 @@ The file default-config.ini should be copied to config.ini in order to be regogn
 
 
 # Commands (german):
-
+```
 $RÜBot
 help                                Gibt kurze Hilfe aus
 help full                           Sendet gesamte hilfe als DM
@@ -39,7 +39,7 @@ user addinfo pirate <true|false>    Notiert ob der Benutzer pirat/gebannt ist.
 user addinfo friendcode <code>      Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000
     
 user deleteinfo friendcode          Löscht den Freundescode des betreffenden Benutzers
-
+```
 
 Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
