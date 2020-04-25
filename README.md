@@ -50,4 +50,7 @@ Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht 
 ![Image of Database](https://raw.githubusercontent.com/krippix/ruebot.py/master/database.PNG)
 
 
-
+# Planned Features
+- Buy and sell (profit tracking)
+- Support for multiple Servers (seperated userlists)
+- price alert notification
