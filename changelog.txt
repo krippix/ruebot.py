@@ -1,5 +1,10 @@
 $RÜBot 
 
+v.1.1.1
+- fixed missing "fc" alias to friendcode command
+- changed price add reply from message to tick reaction.
+
+
 v.1.1.0
 
 - added buy and sell functionality
