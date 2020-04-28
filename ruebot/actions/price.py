@@ -56,10 +56,11 @@ def add(turnip_price, author_id):
                 ruebDB.dbcommit("INSERT INTO turnip_prices (price, date, daytime, users_id_fkey) VALUES (%s, NOW()::date, %s, %s)",(turnip_price, daytime, author_id))
         
                 logging.info("Preis "+str(turnip_price)+" erfolgreich hinzugefügt.")
-                return "Preis "+str(turnip_price)+" erfolgreich hinzugefügt."
+                return "success"
             else:
                 ruebDB.dbcommit("UPDATE turnip_prices SET price=%s WHERE date=NOW()::date AND daytime=%s AND users_id_fkey=%s",(turnip_price, daytime, author_id))
-                return "Preis geändert auf "+str(turnip_price)
+                logging.info("Preis geändert auf "+str(turnip_price))
+                return "success"
         except ruebDB.ruebDatabaseError:
             return msg.DbError()
 #END PRICEADD                  

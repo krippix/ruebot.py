@@ -32,29 +32,30 @@ def buy(author_id, quantity, price):
     try:
         answer_tuple = ruebDB.dbfetchall("SELECT id_pkey from trade_week WHERE date_sunday = %s AND users_id_fkey = %s", (date_sunday,author_id))
     except ruebDB.ruebDatabaseError as e:
-        logging.error(e)
+        logging.error("BUY: "+str(e))
         return ruebot.msg.DbError()
     
     #Check if there is more than one result (that should !NEVER! happen)
+    if len(answer_tuple) > 1:
+        return "Hier ist etwas gewaltig schiefgegangen! <@!280098940156772352>"
     
-    
-    
-    
-    # NOW()::date bleibt denke ich erstmal. Obwohl die Zeit bei rübot liegen sollte.
     
     #TODO: nur durchlassen wenn die Woche noch nicht existiert
-    #Anlegen einer trade_week /es wird angenommen dass noch keine existiert
-    try:
-        ruebDB.dbcommit("INSERT INTO trade_week (date_sunday, users_id_fkey) VALUES (%s, %s)", (str(date_sunday), author_id))
-        logging.info("trade_week für "+str(author_id)+" angelegt")
-    except ruebDB.ruebDatabaseError:
-        logging.error("trade_week anlegen Fehlgeschlagen: "+ruebot.msg.DbError())
-        return ruebot.msg.DbError()
+    
+    #Check if trade_week exists
+    if len(answer_tuple) == 0:
+        
+        #Create current trade_week
+        try:
+            ruebDB.dbcommit("INSERT INTO trade_week (date_sunday, users_id_fkey) VALUES (%s, %s)", (str(date_sunday), author_id))
+            logging.info("trade_week for "+str(author_id)+" created. Sunday: "+str(date_sunday))
+        except ruebDB.ruebDatabaseError:
+            logging.error("creation of trade_week failed!: "+ruebot.msg.DbError())
+            return ruebot.msg.DbError()
     
     
     
     
-    #Check if trading_week already exist for that user in this week
     
     #Get current date from db and 
     

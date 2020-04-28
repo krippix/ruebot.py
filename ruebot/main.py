@@ -160,7 +160,7 @@ async def _user_addinfo_fruit(message, *args):
 #END USER ADDINFO FRUIT <fruit>
 
 #START USER ADDINFO FC <friendcode>
-@_user_addinfo.command(name="friendcode",description="Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000")
+@_user_addinfo.command(name="friendcode",aliases=["fc"],description="Fügt den Freundescode des Nutzers hinzu. Format: SW-0000-0000-0000")
 async def _user_addinfo_friendcode(message, *args):
     logging.debug("USER ADDINFO FRIENDCODE")
          
@@ -308,7 +308,13 @@ async def _price_add(ctx, *args):
                 await ctx.message.add_reaction(x)
         #bullshit end
         
-        await ctx.channel.send(price.add(args, ctx.author.id))  
+        tempstr = price.add(args, ctx.author.id)
+        
+        if tempstr == "success":
+            await ctx.message.add_reaction("✅")
+        else:
+            await ctx.channel.send(tempstr)
+        
         logging.debug("PRICE ADD - FINISHED")
         return   
 #END PRICE ADD

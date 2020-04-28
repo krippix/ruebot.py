@@ -41,7 +41,6 @@ def prices(author_id):
     try:
         #Retrieve whether user is marked as pirate
         answer_tuple = ruebDB.dbrequest("SELECT pirate FROM users WHERE id_pkey=%s", [author_id],)
-        logging.info(answer_tuple)
 
         
         #Check if pirate is true
