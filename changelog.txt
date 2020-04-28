@@ -1,16 +1,9 @@
 $RÜBot 
 
-v.1.1.1
+v.1.0.1
+
 - fixed missing "fc" alias to friendcode command
 - changed price add reply from message to tick reaction.
-
-
-v.1.1.0
-
-- added buy and sell functionality
-- added list profit <user>
-- added list leaderboard
-
 - turnip prices are now descending on sundays
 - changed how commands are called
 - fixed problems when displaying pirate data
@@ -31,7 +24,11 @@ v.1.0.0
 - Pricehistory kann jetzt auch für andere Benutzer ausgegeben werden.
 
 
-Geplante Features
+planned
 
 - price alert
 - queue
+- added buy and sell functionality
+- added list profit <user>
+- added list leaderboard
+
