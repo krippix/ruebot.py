@@ -43,7 +43,7 @@ user addinfo friendcode <code>      Fügt den Freundescode des Nutzers hinzu. Fo
 user deleteinfo friendcode          Löscht den Freundescode des betreffenden Benutzers
 ```
 
-Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
+Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 
 Fragt mich nicht warum die Commands englisch sind, ich weiß es doch auch nicht :(
 
 # Database behind ruebot
