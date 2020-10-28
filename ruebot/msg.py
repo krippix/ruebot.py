@@ -27,7 +27,7 @@ def about():
     return """
 >>> **"""+config.bot_name()+" "+config.bot_version()+"""**
 
-Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372 | ruebot@gustelgang.de
+Für Feedback oder informationen bezüglich des Bots bin ich per Mail oder auf Discord erreichbar: krippix#8372
 
 https://github.com/krippix/ruebot.py
 """
